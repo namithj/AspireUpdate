@@ -19,11 +19,11 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 	 *
 	 * @param string $file Path to the file.
 	 * @param int    $number_of_lines The number of lines to read. Default is -1 (read all lines).
-	 * @param bool   $count_bottom_to_up Count the lines from the bottom up. Default is false (count from top to bottom).
+	 * @param bool   $count_bottom_to_top Count the lines from the bottom up. Default is false (count from top to bottom).
 	 *
 	 * @return array|false File contents in an array on success, false on failure.
 	 */
-	public function get_contents_array( $file, $number_of_lines = -1, $count_bottom_to_up = false ) {
+	public function get_contents_array( $file, $number_of_lines = -1, $count_bottom_to_top = false ) {
 		if ( ! $this->exists( $file ) ) {
 			return false;
 		}
@@ -32,12 +32,7 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 			return @file( $file );
 		}
 
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		/**
-		 * Extending WP_Filesystem methods for efficiency.  This is a valid use case.
-		 */
 		$handle = @fopen( $file, 'r' );
-		// phpcs:enable
 		if ( ! $handle ) {
 			return false;
 		}
@@ -45,11 +40,15 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 		$lines      = [];
 		$line_count = 0;
 
+		// phpcs:disable Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
+		/**
+		 * This is a valid and intentional use.
+		 */
 		while ( ( $line = fgets( $handle ) ) !== false ) {
 			$lines[] = rtrim( $line, "\r\n" );
 			++$line_count;
 
-			if ( $count_bottom_to_up ) {
+			if ( $count_bottom_to_top ) {
 				if ( $number_of_lines > 0 && $line_count > $number_of_lines ) {
 					array_shift( $lines );
 				}
@@ -57,13 +56,9 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 					break;
 			}
 		}
-
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-		/**
-		 * Extending WP_Filesystem methods for efficiency.  This is a valid use case.
-		 */
-		fclose( $handle );
 		// phpcs:enable
+
+		fclose( $handle );
 
 		return $lines;
 	}
@@ -87,33 +82,18 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 		if ( ! in_array( $write_mode, $valid_write_modes, true ) ) {
 			return false;
 		}
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		/**
-		 * Extending WP_Filesystem methods for efficiency.  This is a valid use case.
-		 */
-		$handle = @fopen( $file, $write_mode );
-		// phpcs:enable
 
+		$handle = @fopen( $file, $write_mode );
 		if ( ! $handle ) {
 			return false;
 		}
 
 		mbstring_binary_safe_encoding();
-		$data_length = strlen( $contents );
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-		/**
-		 * Extending WP_Filesystem methods for efficiency.  This is a valid use case.
-		 */
+		$data_length   = strlen( $contents );
 		$bytes_written = fwrite( $handle, $contents );
-		// phpcs:enable
 		reset_mbstring_encoding();
 
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
-		/**
-		 * Extending WP_Filesystem methods for efficiency.  This is a valid use case.
-		 */
 		fclose( $handle );
-		// phpcs:enable
 
 		if ( $data_length !== $bytes_written ) {
 			return false;
