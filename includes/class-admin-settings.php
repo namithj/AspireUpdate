@@ -104,7 +104,7 @@ class Admin_Settings {
 					network_admin_url( 'index.php?page=aspireupdate-settings' )
 				)
 			);
-			exit;
+			! defined( 'AP_RUN_TESTS' ) && exit;
 		}
 	}
 
@@ -279,7 +279,7 @@ class Admin_Settings {
 					network_admin_url( 'index.php?page=aspireupdate-settings' )
 				)
 			);
-			exit;
+			! defined( 'AP_RUN_TESTS' ) && exit;
 		}
 	}
 
@@ -324,7 +324,7 @@ class Admin_Settings {
 			[
 				'ajax_url'         => network_admin_url( 'admin-ajax.php' ),
 				'nonce'            => wp_create_nonce( 'aspireupdate-ajax' ),
-				'domain'           => Utilities::get_top_level_domain(),
+				'domain'           => Utilities::get_site_domain(),
 				'line_ending'      => PHP_EOL,
 				'unexpected_error' => esc_html__( 'Unexpected Error', 'aspireupdate' ),
 			]
@@ -505,6 +505,8 @@ class Admin_Settings {
 
 	/**
 	 * The Fields API which any CMS should have in its core but something we dont, hence this ugly hack.
+	 *
+	 * @codeCoverageIgnore Test with E2E tests instead.
 	 *
 	 * @param array $args The Field Parameters.
 	 *
