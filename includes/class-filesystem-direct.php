@@ -15,8 +15,6 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 	/**
 	 * Reads entire file into an array with options for limiting the number of lines and direction from the the lines are counted.
 	 *
-	 * @since 2.5.0
-	 *
 	 * @param string $file Path to the file.
 	 * @param int    $number_of_lines The number of lines to read. Default is -1 (read all lines).
 	 * @param bool   $count_bottom_to_top Count the lines from the bottom up. Default is false (count from top to bottom).
