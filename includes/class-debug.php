@@ -31,7 +31,7 @@ class Debug {
 	/**
 	 * Initializes the WordPress Filesystem.
 	 *
-	 * @return WP_Filesystem_Direct|false The filesystem object or false on failure.
+	 * @return Filesystem_Direct The filesystem object.
 	 */
 	private static function init_filesystem() {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
