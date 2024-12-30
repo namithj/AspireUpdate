@@ -20,6 +20,13 @@ class Debug {
 	private static $log_file = 'debug-aspire-update.log';
 
 	/**
+	 * The filesystem.
+	 *
+	 * @var Filesystem_Direct
+	 */
+	private static $filesystem;
+
+	/**
 	 * Get the Log file path.
 	 *
 	 * @return string The Log file path.
@@ -34,38 +41,14 @@ class Debug {
 	 * @return Filesystem_Direct The filesystem object.
 	 */
 	private static function init_filesystem() {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
-		WP_Filesystem();
-		return new Filesystem_Direct( false );
-	}
-
-	/**
-	 * Checks the filesystem status and logs error to debug log.
-	 *
-	 * @param WP_Filesystem_Direct $wp_filesystem The filesystem object.
-	 *
-	 * @return boolean true on success and false on failure.
-	 */
-	private static function verify_filesystem( $wp_filesystem ) {
-		if ( ! $wp_filesystem ) {
-			if (
-				defined( 'WP_DEBUG' ) &&
-				( true === WP_DEBUG ) &&
-				defined( 'WP_DEBUG_LOG' ) &&
-				( true === WP_DEBUG_LOG )
-			) {
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions
-				/**
-				 * Log error in file write fails only if debug is set to true.  This is a valid use case.
-				 */
-				error_log( 'AspireUpdate - Could not open or write to the file system. Check file system permissions to debug log directory.' ); // @codeCoverageIgnore
-				// phpcs:enable
-			}
-			return false;
+		if ( ! self::$filesystem instanceof Filesystem_Direct ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+			WP_Filesystem();
+			self::$filesystem = new Filesystem_Direct( false );
 		}
-		return true;
+		return self::$filesystem;
 	}
 
 	/**
@@ -73,14 +56,11 @@ class Debug {
 	 *
 	 * @param integer $limit Max no of lines to return. Defaults to a 1000 lines.
 	 *
-	 * @return string|WP_Error The File content truncate upto the number of lines set in the limit parameter.
+	 * @return array|WP_Error An array of lines in the file, limited to $limit, or a WP_Error object on failure.
 	 */
 	public static function read( $limit = 1000 ) {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
-		if ( ! self::verify_filesystem( $wp_filesystem ) || ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
-			return new \WP_Error( 'not_readable', __( 'Error: Unable to read the log file.', 'aspireupdate' ) );
-		}
 
 		$file_content = $wp_filesystem->get_contents_array( $file_path, $limit, true );
 
@@ -99,9 +79,6 @@ class Debug {
 	public static function clear() {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
-		if ( ! self::verify_filesystem( $wp_filesystem ) || ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_writable( $file_path ) ) {
-			return new \WP_Error( 'not_accessible', __( 'Error: Unable to access the log file.', 'aspireupdate' ) );
-		}
 
 		$wp_filesystem->put_contents(
 			$file_path,
@@ -118,24 +95,22 @@ class Debug {
 	 * @param string $type   The log level ('string', 'request', 'response').
 	 */
 	public static function log( $message, $type = 'string' ) {
-		$wp_filesystem = self::init_filesystem();
-		if ( self::verify_filesystem( $wp_filesystem ) ) {
-			$timestamp         = gmdate( 'Y-m-d H:i:s' );
-			$formatted_message = sprintf(
-				'[%s] [%s]: %s',
-				$timestamp,
-				strtoupper( $type ),
-				self::format_message( $message )
-			) . PHP_EOL;
+		$wp_filesystem     = self::init_filesystem();
+		$timestamp         = gmdate( 'Y-m-d H:i:s' );
+		$formatted_message = sprintf(
+			'[%s] [%s]: %s',
+			$timestamp,
+			strtoupper( $type ),
+			self::format_message( $message )
+		) . PHP_EOL;
 
-			$file_path = self::get_file_path();
-			$wp_filesystem->put_contents(
-				$file_path,
-				$formatted_message,
-				FS_CHMOD_FILE,
-				'a'
-			);
-		}
+		$file_path = self::get_file_path();
+		$wp_filesystem->put_contents(
+			$file_path,
+			$formatted_message,
+			FS_CHMOD_FILE,
+			'a'
+		);
 	}
 
 	/**
