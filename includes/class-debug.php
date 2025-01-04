@@ -62,6 +62,10 @@ class Debug {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
 
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
+			return new \WP_Error( 'not_readable', __( 'Error: Unable to read the log file.', 'aspireupdate' ) );
+		}
+
 		$file_content = $wp_filesystem->get_contents_array( $file_path, $limit, true );
 
 		if ( ( false === $file_content ) || ( 0 === count( $file_content ) ) ) {
@@ -79,6 +83,10 @@ class Debug {
 	public static function clear() {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
+
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_writable( $file_path ) ) {
+			return new \WP_Error( 'not_accessible', __( 'Error: Unable to access the log file.', 'aspireupdate' ) );
+		}
 
 		$wp_filesystem->put_contents(
 			$file_path,
