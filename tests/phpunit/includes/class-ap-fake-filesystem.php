@@ -3,7 +3,7 @@
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
-class AP_FakeFilesystem extends WP_Filesystem_Direct {
+class AP_FakeFilesystem extends AspireUpdate\Filesystem_Direct {
 	/**
 	 * Whether paths should exist.
 	 *
