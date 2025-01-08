@@ -8,6 +8,12 @@
 /**
  * Tests for Debug::clear()
  *
+ * These tests cause constants to be defined.
+ * They must run in separate processes and must not preserve global state.
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ *
  * @covers \AspireUpdate\Debug::clear
  */
 class Debug_ClearTest extends Debug_UnitTestCase {

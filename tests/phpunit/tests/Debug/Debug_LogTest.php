@@ -8,6 +8,12 @@
 /**
  * Tests for Debug::log()
  *
+ * These tests cause constants to be defined.
+ * They must run in separate processes and must not preserve global state.
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ *
  * @covers \AspireUpdate\Debug::log
  */
 class Debug_LogTest extends Debug_UnitTestCase {
