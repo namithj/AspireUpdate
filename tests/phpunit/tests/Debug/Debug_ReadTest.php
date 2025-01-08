@@ -56,14 +56,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, '' );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was not returned.'
 		);
 	}
@@ -76,14 +88,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, " \n\r\t\v\x00" );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was not returned.'
 		);
 	}
@@ -96,14 +120,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, 'Some contents' );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringNotContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was returned.'
 		);
 	}
@@ -120,14 +156,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 2 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			2,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringContainsString(
 			'Log truncated',
-			$actual,
+			$entry,
 			'The truncation message was not returned.'
 		);
 	}
@@ -144,12 +192,18 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 3 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
 		);
 
-		$this->assertStringNotContainsString(
+		$this->assertCount(
+			3,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$this->assertNotContains(
 			'Log truncated',
 			$actual,
 			'The truncation message was added.'
@@ -168,12 +222,18 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 4 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
 		);
 
-		$this->assertStringNotContainsString(
+		$this->assertCount(
+			3,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$this->assertNotContains(
 			'Log truncated',
 			$actual,
 			'The truncation message was added.'
