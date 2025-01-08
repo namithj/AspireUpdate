@@ -38,8 +38,6 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 	 * @covers \AspireUpdate\Debug::get_file_path
 	 */
 	public function test_should_return_wp_error_when_log_file_is_not_readable() {
-		global $wp_filesystem;
-
 		// Create the log file.
 		file_put_contents( self::$log_file, '' );
 
