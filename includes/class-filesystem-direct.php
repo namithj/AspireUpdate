@@ -43,7 +43,7 @@ class Filesystem_Direct extends \WP_Filesystem_Direct {
 		 * This is a valid and intentional use.
 		 */
 		while ( ( $line = fgets( $handle ) ) !== false ) {
-			$lines[] = rtrim( $line, "\r\n" );
+			$lines[] = trim( $line );
 			++$line_count;
 
 			if ( $count_bottom_to_top ) {
