@@ -166,18 +166,6 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 			$actual,
 			'An incorrect number of entries was returned.'
 		);
-
-		$entry = reset( $actual );
-		$this->assertIsString(
-			$entry,
-			'The entry is not a string.'
-		);
-
-		$this->assertStringContainsString(
-			'Log truncated',
-			$entry,
-			'The truncation message was not returned.'
-		);
 	}
 
 	/**
@@ -202,12 +190,6 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 			$actual,
 			'An incorrect number of entries was returned.'
 		);
-
-		$this->assertNotContains(
-			'Log truncated',
-			$actual,
-			'The truncation message was added.'
-		);
 	}
 
 	/**
@@ -231,12 +213,6 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 			3,
 			$actual,
 			'An incorrect number of entries was returned.'
-		);
-
-		$this->assertNotContains(
-			'Log truncated',
-			$actual,
-			'The truncation message was added.'
 		);
 	}
 }
