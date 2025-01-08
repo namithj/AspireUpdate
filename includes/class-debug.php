@@ -68,7 +68,7 @@ class Debug {
 
 		$file_content = $wp_filesystem->get_contents_array( $file_path, $limit, true );
 
-		if ( ( false === $file_content ) || ( 0 === count( $file_content ) ) ) {
+		if ( ( false === $file_content ) || ( 0 === count( array_filter( $file_content ) ) ) ) {
 			$file_content = [ esc_html__( '*****Log file is empty.*****', 'aspireupdate' ) ];
 		}
 
