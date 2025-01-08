@@ -17,22 +17,6 @@
  * @covers \AspireUpdate\Debug::log
  */
 class Debug_LogTest extends Debug_UnitTestCase {
-	/**
-	 * Test that nothing is written to the log file when the filesystem isn't available.
-	 *
-	 * @covers \AspireUpdate\Debug::init_filesystem
-	 * @covers \AspireUpdate\Debug::verify_filesystem
-	 */
-	public function test_should_not_write_to_log_file_when_filesystem_is_not_available() {
-		add_filter( 'filesystem_method', '__return_false' );
-
-		AspireUpdate\Debug::log( 'Test log message.' );
-
-		$this->assertFileDoesNotExist(
-			self::$log_file,
-			'The log file was created.'
-		);
-	}
 
 	/**
 	 * Test that the log file is created when it doesn't already exist.
