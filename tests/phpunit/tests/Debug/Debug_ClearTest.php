@@ -58,10 +58,8 @@ class Debug_ClearTest extends Debug_UnitTestCase {
 	 * @covers \AspireUpdate\Debug::get_file_path
 	 */
 	public function test_should_return_wp_error_when_log_file_is_not_writable() {
-		global $wp_filesystem;
-
-		// Backup and replace the filesystem object.
-		$wp_filesystem = $this->get_fake_filesystem( true, true, false );
+		// Replace the filesystem object.
+		self::$reflection->setStaticPropertyValue( 'filesystem', $this->get_fake_filesystem( true, true, false ) );
 
 		$actual = AspireUpdate\Debug::clear();
 

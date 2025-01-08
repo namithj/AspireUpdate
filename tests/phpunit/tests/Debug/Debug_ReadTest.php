@@ -46,8 +46,8 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		// Create the log file.
 		file_put_contents( self::$log_file, '' );
 
-		// Backup and replace the filesystem object.
-		$wp_filesystem = $this->get_fake_filesystem( true, false, true );
+		// Replace the filesystem object.
+		self::$reflection->setStaticPropertyValue( 'filesystem', $this->get_fake_filesystem( true, false, true ) );
 
 		$actual = AspireUpdate\Debug::read();
 
