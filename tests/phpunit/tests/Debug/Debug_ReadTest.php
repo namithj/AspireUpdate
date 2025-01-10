@@ -135,10 +135,10 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 	}
 
 	/**
-	 * Test that a truncation message is added when the log file has more
+	 * Test that truncation is performed when the log file has more
 	 * lines than requested.
 	 */
-	public function test_should_add_a_truncation_message_when_log_file_has_more_lines_than_requested() {
+	public function test_should_add_truncate_when_log_file_has_more_lines_than_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -159,10 +159,10 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 	}
 
 	/**
-	 * Test that no truncation message is added when the log file has the same
+	 * Test that the whole log is returned when the log file has the same
 	 * number of lines as requested.
 	 */
-	public function test_should_not_add_a_truncation_message_when_log_file_has_the_same_number_of_lines_as_requested() {
+	public function test_should_return_whole_log_when_log_file_has_the_same_number_of_lines_as_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -183,10 +183,10 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 	}
 
 	/**
-	 * Test that no truncation message is added when the log file has fewer than
+	 * Test that truncation is not performed when the log file has fewer than
 	 * lines than requested.
 	 */
-	public function test_should_not_add_a_truncation_message_when_log_file_has_fewer_lines_than_requested() {
+	public function test_should_not_truncate_when_log_file_has_fewer_lines_than_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
