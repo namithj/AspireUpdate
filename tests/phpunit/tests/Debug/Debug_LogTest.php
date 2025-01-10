@@ -8,25 +8,15 @@
 /**
  * Tests for Debug::log()
  *
+ * These tests cause constants to be defined.
+ * They must run in separate processes and must not preserve global state.
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ *
  * @covers \AspireUpdate\Debug::log
  */
 class Debug_LogTest extends Debug_UnitTestCase {
-	/**
-	 * Test that nothing is written to the log file when the filesystem isn't available.
-	 *
-	 * @covers \AspireUpdate\Debug::init_filesystem
-	 * @covers \AspireUpdate\Debug::verify_filesystem
-	 */
-	public function test_should_not_write_to_log_file_when_filesystem_is_not_available() {
-		add_filter( 'filesystem_method', '__return_false' );
-
-		AspireUpdate\Debug::log( 'Test log message.' );
-
-		$this->assertFileDoesNotExist(
-			self::$log_file,
-			'The log file was created.'
-		);
-	}
 
 	/**
 	 * Test that the log file is created when it doesn't already exist.
@@ -75,27 +65,41 @@ class Debug_LogTest extends Debug_UnitTestCase {
 	}
 
 	/**
-	 * Test that the message is prepended to an existing log file.
+	 * Test that the message is appended to an existing log file.
 	 *
 	 * @covers \AspireUpdate\Debug::format_message
 	 */
-	public function test_should_add_message_to_an_existing_log_file() {
-		$existing_content = 'An existing log file.';
-		file_put_contents( self::$log_file, $existing_content );
+	public function test_should_append_message_to_an_existing_log_file() {
+		$previous_message = "A previously logged message.\n";
+		file_put_contents( self::$log_file, $previous_message );
 
-		$message = 'Test log message.';
+		$new_message = 'New log message.';
 
-		AspireUpdate\Debug::log( $message );
+		AspireUpdate\Debug::log( $new_message );
 
 		$this->assertFileExists(
 			self::$log_file,
 			'The log file was not created.'
 		);
 
+		$actual = file_get_contents( self::$log_file );
+
 		$this->assertStringContainsString(
-			"$message\n$existing_content",
-			file_get_contents( self::$log_file ),
-			'The message was not prepended to the log file.'
+			$previous_message,
+			$actual,
+			'The previous message does not exist.'
+		);
+
+		$this->assertStringContainsString(
+			$new_message,
+			$actual,
+			'The new message does not exist.'
+		);
+
+		$this->assertLessThan(
+			strpos( $actual, $new_message ),
+			strpos( $actual, $previous_message ),
+			'The new message was not appended to the log file.'
 		);
 	}
 

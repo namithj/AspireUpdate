@@ -13,18 +13,25 @@ abstract class Debug_UnitTestCase extends WP_UnitTestCase {
 	protected static $log_file;
 
 	/**
+	 * The class for use with the Reflection API.
+	 *
+	 * @var \ReflectionClass
+	 */
+	protected static $reflection;
+
+	/**
+	 * The default filesystem.
+	 *
+	 * @var \AspireUpdate\Filesystem_Direct|null
+	 */
+	protected static $default_filesystem;
+
+	/**
 	 * Previously created filesystems.
 	 *
 	 * @var array
 	 */
 	protected static $filesystems = [];
-
-	/**
-	 * The original value of $wp_filesystem before any tests run.
-	 *
-	 * @var WP_Filesystem_Base|null|false False if not already set.
-	 */
-	protected static $default_filesystem;
 
 	/**
 	 * Gets the log file's path, and deletes if it exists before any tests run.
@@ -48,11 +55,8 @@ abstract class Debug_UnitTestCase extends WP_UnitTestCase {
 			unlink( self::$log_file );
 		}
 
-		if ( isset( $GLOBALS['wp_filesystem'] ) ) {
-			self::$default_filesystem = $GLOBALS['wp_filesystem'];
-		} else {
-			self::$default_filesystem = false;
-		}
+		self::$reflection         = new ReflectionClass( '\AspireUpdate\Debug' );
+		self::$default_filesystem = self::$reflection->getStaticPropertyValue( 'filesystem' );
 	}
 
 	/**
@@ -83,11 +87,7 @@ abstract class Debug_UnitTestCase extends WP_UnitTestCase {
 			unlink( self::$log_file );
 		}
 
-		if ( false === self::$default_filesystem ) {
-			unset( $GLOBALS['wp_filesystem'] );
-		} else {
-			$GLOBALS['wp_filesystem'] = self::$default_filesystem;
-		}
+		self::$reflection->setStaticPropertyValue( 'filesystem', self::$default_filesystem );
 
 		parent::tear_down();
 	}

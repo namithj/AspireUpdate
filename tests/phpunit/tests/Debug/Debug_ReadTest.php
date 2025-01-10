@@ -12,21 +12,9 @@
  */
 class Debug_ReadTest extends Debug_UnitTestCase {
 	/**
-	 * Test that a WP_Error object is returned when the filesystem isn't available.
-	 *
-	 * @covers \AspireUpdate\Debug::init_filesystem
-	 * @covers \AspireUpdate\Debug::verify_filesystem
-	 */
-	public function test_should_return_wp_error_when_filesystem_is_not_available() {
-		add_filter( 'filesystem_method', '__return_false' );
-		$this->assertWPError( AspireUpdate\Debug::read() );
-	}
-
-	/**
 	 * Test that a WP_Error object is returned when the log file doesn't exist.
 	 *
 	 * @covers \AspireUpdate\Debug::init_filesystem
-	 * @covers \AspireUpdate\Debug::verify_filesystem
 	 * @covers \AspireUpdate\Debug::get_file_path
 	 */
 	public function test_should_return_wp_error_when_log_file_does_not_exist() {
@@ -37,17 +25,14 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 	 * Test that a WP_Error object is returned when the log file isn't readable.
 	 *
 	 * @covers \AspireUpdate\Debug::init_filesystem
-	 * @covers \AspireUpdate\Debug::verify_filesystem
 	 * @covers \AspireUpdate\Debug::get_file_path
 	 */
 	public function test_should_return_wp_error_when_log_file_is_not_readable() {
-		global $wp_filesystem;
-
 		// Create the log file.
 		file_put_contents( self::$log_file, '' );
 
-		// Backup and replace the filesystem object.
-		$wp_filesystem = $this->get_fake_filesystem( true, false, true );
+		// Replace the filesystem object.
+		self::$reflection->setStaticPropertyValue( 'filesystem', $this->get_fake_filesystem( true, false, true ) );
 
 		$actual = AspireUpdate\Debug::read();
 
@@ -61,14 +46,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, '' );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was not returned.'
 		);
 	}
@@ -81,14 +78,26 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, " \n\r\t\v\x00" );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was not returned.'
 		);
 	}
@@ -101,23 +110,35 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 		file_put_contents( self::$log_file, 'Some contents' );
 
 		$actual = AspireUpdate\Debug::read();
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
+		);
+
+		$this->assertCount(
+			1,
+			$actual,
+			'An incorrect number of entries was returned.'
+		);
+
+		$entry = reset( $actual );
+		$this->assertIsString(
+			$entry,
+			'The entry is not a string.'
 		);
 
 		$this->assertStringNotContainsString(
 			'Log file is empty',
-			$actual,
+			$entry,
 			'The empty log file message was returned.'
 		);
 	}
 
 	/**
-	 * Test that a truncation message is added when the log file has more
+	 * Test that truncation is performed when the log file has more
 	 * lines than requested.
 	 */
-	public function test_should_add_a_truncation_message_when_log_file_has_more_lines_than_requested() {
+	public function test_should_add_truncate_when_log_file_has_more_lines_than_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -125,23 +146,23 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 2 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
 		);
 
-		$this->assertStringContainsString(
-			'Log truncated',
+		$this->assertCount(
+			2,
 			$actual,
-			'The truncation message was not returned.'
+			'An incorrect number of entries was returned.'
 		);
 	}
 
 	/**
-	 * Test that no truncation message is added when the log file has the same
+	 * Test that the whole log is returned when the log file has the same
 	 * number of lines as requested.
 	 */
-	public function test_should_not_add_a_truncation_message_when_log_file_has_the_same_number_of_lines_as_requested() {
+	public function test_should_return_whole_log_when_log_file_has_the_same_number_of_lines_as_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -149,23 +170,23 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 3 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
 		);
 
-		$this->assertStringNotContainsString(
-			'Log truncated',
+		$this->assertCount(
+			3,
 			$actual,
-			'The truncation message was added.'
+			'An incorrect number of entries was returned.'
 		);
 	}
 
 	/**
-	 * Test that no truncation message is added when the log file has fewer than
+	 * Test that truncation is not performed when the log file has fewer than
 	 * lines than requested.
 	 */
-	public function test_should_not_add_a_truncation_message_when_log_file_has_fewer_lines_than_requested() {
+	public function test_should_not_truncate_when_log_file_has_fewer_lines_than_requested() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -173,15 +194,15 @@ class Debug_ReadTest extends Debug_UnitTestCase {
 
 		$actual = AspireUpdate\Debug::read( 4 );
 
-		$this->assertIsString(
+		$this->assertIsArray(
 			$actual,
-			'A string was not returned.'
+			'An array was not returned.'
 		);
 
-		$this->assertStringNotContainsString(
-			'Log truncated',
+		$this->assertCount(
+			3,
 			$actual,
-			'The truncation message was added.'
+			'An incorrect number of entries was returned.'
 		);
 	}
 }

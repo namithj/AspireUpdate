@@ -59,6 +59,23 @@
 	<!-- Enforce short syntax arrays. -->
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
+	<!-- Exclude custom Filesystem API implementations from certain sniffs. -->
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fopen">
+		<exclude-pattern>includes/class-filesystem-direct\.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fclose">
+		<exclude-pattern>includes/class-filesystem-direct\.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_fwrite">
+		<exclude-pattern>includes/class-filesystem-direct\.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.PHP.NoSilencedErrors.Discouraged">
+		<exclude-pattern>includes/class-filesystem-direct\.php</exclude-pattern>
+	</rule>
+
 	<!-- Exclude test classes from naming conventions. -->
 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
@@ -80,6 +97,12 @@
 		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
 	</rule>
 	<rule ref="WordPress.WP.AlternativeFunctions.unlink_unlink">
+		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_mkdir">
+		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_rmdir">
 		<exclude-pattern>/tests/phpunit/*</exclude-pattern>
 	</rule>
 </ruleset>

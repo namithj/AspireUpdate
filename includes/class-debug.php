@@ -20,6 +20,13 @@ class Debug {
 	private static $log_file = 'debug-aspire-update.log';
 
 	/**
+	 * The filesystem.
+	 *
+	 * @var Filesystem_Direct
+	 */
+	private static $filesystem;
+
+	/**
 	 * Get the Log file path.
 	 *
 	 * @return string The Log file path.
@@ -31,44 +38,17 @@ class Debug {
 	/**
 	 * Initializes the WordPress Filesystem.
 	 *
-	 * @return WP_Filesystem_Base|false The filesystem object or false on failure.
+	 * @return Filesystem_Direct The filesystem object.
 	 */
 	private static function init_filesystem() {
-		global $wp_filesystem;
-
-		if ( ! $wp_filesystem ) {
+		if ( ! self::$filesystem instanceof Filesystem_Direct ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 			WP_Filesystem();
+			self::$filesystem = new Filesystem_Direct( false );
 		}
-
-		return $wp_filesystem;
-	}
-
-	/**
-	 * Checks the filesystem status and logs error to debug log.
-	 *
-	 * @param WP_Filesystem_Base $wp_filesystem The filesystem object.
-	 *
-	 * @return boolean true on success and false on failure.
-	 */
-	private static function verify_filesystem( $wp_filesystem ) {
-		if ( ! $wp_filesystem ) {
-			if (
-				defined( 'WP_DEBUG' ) &&
-				( true === WP_DEBUG ) &&
-				defined( 'WP_DEBUG_LOG' ) &&
-				( true === WP_DEBUG_LOG )
-			) {
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions
-				/**
-				 * Log error in file write fails only if debug is set to true.  This is a valid use case.
-				 */
-				error_log( 'AspireUpdate - Could not open or write to the file system. Check file system permissions to debug log directory.' ); // @codeCoverageIgnore
-				// phpcs:enable
-			}
-			return false;
-		}
-		return true;
+		return self::$filesystem;
 	}
 
 	/**
@@ -76,34 +56,23 @@ class Debug {
 	 *
 	 * @param integer $limit Max no of lines to return. Defaults to a 1000 lines.
 	 *
-	 * @return string|WP_Error The File content truncate upto the number of lines set in the limit parameter.
+	 * @return array|WP_Error An array of lines in the file, limited to $limit, or a WP_Error object on failure.
 	 */
 	public static function read( $limit = 1000 ) {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
-		if ( ! self::verify_filesystem( $wp_filesystem ) || ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
+
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
 			return new \WP_Error( 'not_readable', __( 'Error: Unable to read the log file.', 'aspireupdate' ) );
 		}
 
-		$file_content = $wp_filesystem->get_contents_array( $file_path );
-		$content      = '';
-		$index        = 0;
-		foreach ( $file_content as $file_content_lines ) {
-			if ( ( $index < $limit ) ) {
-				$content .= $file_content_lines . PHP_EOL;
-				++$index;
-			}
+		$file_content = $wp_filesystem->get_contents_array( $file_path, $limit, true );
+
+		if ( ( false === $file_content ) || ( 0 === count( array_filter( $file_content ) ) ) ) {
+			$file_content = [ esc_html__( '*****Log file is empty.*****', 'aspireupdate' ) ];
 		}
-		if ( '' === trim( $content ) ) {
-			$content = esc_html__( '*****Log file is empty.*****', 'aspireupdate' );
-		} elseif ( $limit < count( $file_content ) ) {
-			$content .= PHP_EOL . sprintf(
-				/* translators: 1: The number of lines at which the content was truncated. */
-				esc_html__( '*****Log truncated at %s lines.*****', 'aspireupdate' ),
-				$limit
-			);
-		}
-		return $content;
+
+		return $file_content;
 	}
 
 	/**
@@ -114,7 +83,8 @@ class Debug {
 	public static function clear() {
 		$wp_filesystem = self::init_filesystem();
 		$file_path     = self::get_file_path();
-		if ( ! self::verify_filesystem( $wp_filesystem ) || ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_writable( $file_path ) ) {
+
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_writable( $file_path ) ) {
 			return new \WP_Error( 'not_accessible', __( 'Error: Unable to access the log file.', 'aspireupdate' ) );
 		}
 
@@ -133,30 +103,22 @@ class Debug {
 	 * @param string $type   The log level ('string', 'request', 'response').
 	 */
 	public static function log( $message, $type = 'string' ) {
-		$wp_filesystem = self::init_filesystem();
-		if ( self::verify_filesystem( $wp_filesystem ) ) {
-			$timestamp         = gmdate( 'Y-m-d H:i:s' );
-			$formatted_message = sprintf(
-				'[%s] [%s]: %s',
-				$timestamp,
-				strtoupper( $type ),
-				self::format_message( $message )
-			) . PHP_EOL;
+		$wp_filesystem     = self::init_filesystem();
+		$timestamp         = gmdate( 'Y-m-d H:i:s' );
+		$formatted_message = sprintf(
+			'[%s] [%s]: %s',
+			$timestamp,
+			strtoupper( $type ),
+			self::format_message( $message )
+		) . PHP_EOL;
 
-			$file_path = self::get_file_path();
-
-			$content = '';
-			if ( $wp_filesystem->exists( $file_path ) ) {
-				if ( $wp_filesystem->is_readable( $file_path ) ) {
-					$content = $wp_filesystem->get_contents( $file_path );
-				}
-			}
-			$wp_filesystem->put_contents(
-				$file_path,
-				$formatted_message . $content,
-				FS_CHMOD_FILE
-			);
-		}
+		$file_path = self::get_file_path();
+		$wp_filesystem->put_contents(
+			$file_path,
+			$formatted_message,
+			FS_CHMOD_FILE,
+			'a'
+		);
 	}
 
 	/**
