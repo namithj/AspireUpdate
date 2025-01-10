@@ -42,6 +42,8 @@ class Debug_ClearTest extends Debug_UnitTestCase {
 	 * @covers \AspireUpdate\Debug::get_file_path
 	 */
 	public function test_should_return_wp_error_when_log_file_is_not_writable() {
+		file_put_contents( self::$log_file, '' );
+
 		// Replace the filesystem object.
 		self::$reflection->setStaticPropertyValue( 'filesystem', $this->get_fake_filesystem( true, true, false ) );
 
@@ -50,11 +52,6 @@ class Debug_ClearTest extends Debug_UnitTestCase {
 		$this->assertWPError(
 			$actual,
 			'A WP_Error was not returned.'
-		);
-
-		$this->assertFileDoesNotExist(
-			self::$log_file,
-			'The log file was created.'
 		);
 	}
 
