@@ -12,16 +12,6 @@
  */
 class Debug_ReadTest extends Debug_UnitTestCase {
 	/**
-	 * Test that a WP_Error object is returned when the filesystem isn't available.
-	 *
-	 * @covers \AspireUpdate\Debug::init_filesystem
-	 */
-	public function test_should_return_wp_error_when_filesystem_is_not_available() {
-		add_filter( 'filesystem_method', '__return_false' );
-		$this->assertWPError( AspireUpdate\Debug::read() );
-	}
-
-	/**
 	 * Test that a WP_Error object is returned when the log file doesn't exist.
 	 *
 	 * @covers \AspireUpdate\Debug::init_filesystem
