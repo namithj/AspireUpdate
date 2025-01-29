@@ -43,10 +43,11 @@ class Controller {
 		if ( isset( $api_host ) && ( '' !== $api_host ) ) {
 			$enable_debug = $admin_settings->get_setting( 'enable_debug', false );
 			$disable_ssl  = $admin_settings->get_setting( 'disable_ssl_verification', false );
+			$api_key      = $admin_settings->get_setting( 'api_key', '' );
 			if ( $enable_debug && $disable_ssl ) {
-				new API_Rewrite( $api_host, true );
+				new API_Rewrite( $api_host, true, $api_key );
 			} else {
-				new API_Rewrite( $api_host, false );
+				new API_Rewrite( $api_host, false, $api_key );
 			}
 		}
 	}

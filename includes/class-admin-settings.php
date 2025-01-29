@@ -415,10 +415,14 @@ class Admin_Settings {
 				'description' => esc_html__( 'Your new API Host.', 'aspireupdate' ),
 				'options'     => [
 					[
-						'value'           => 'api.aspirecloud.org',
-						'label'           => 'AspireCloud (api.aspirecloud.org)',
+						'value'           => 'api.aspirecloud.net',
+						'label'           => sprintf(
+							/* translators: 1: The name of the API Service */
+							__( 'AspireCloud (%1$s)', 'aspireupdate' ),
+							'api.aspirecloud.net'
+						),
 						'require-api-key' => 'false',
-						'api-key-url'     => 'api.aspirecloud.org/v1/apitoken',
+						'api-key-url'     => 'api.aspirecloud.net/v1/apitoken',
 					],
 					[
 						'value'           => 'other',
