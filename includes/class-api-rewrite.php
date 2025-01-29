@@ -33,18 +33,26 @@ class API_Rewrite {
 	private $disable_ssl;
 
 	/**
+	 * API Key.
+	 *
+	 * @var string
+	 */
+	private $api_key;
+
+	/**
 	 * The Constructor.
 	 *
 	 * @param string  $redirected_host The host to redirect to.
 	 * @param boolean $disable_ssl Disable SSL.
 	 */
-	public function __construct( $redirected_host, $disable_ssl ) {
+	public function __construct( $redirected_host, $disable_ssl, $api_key ) {
 		if ( 'debug' === $redirected_host ) {
 			$this->redirected_host = $this->default_host;
 		} else {
 			$this->redirected_host = strtolower( $redirected_host );
 		}
 		$this->disable_ssl = $disable_ssl;
+		$this->api_key     = $api_key;
 		add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
 	}
 
@@ -65,17 +73,30 @@ class API_Rewrite {
 			( '' !== $this->redirected_host )
 		) {
 			if ( false !== strpos( $url, $this->default_host ) ) {
-				Debug::log_string( 'Default API Found: ' . $url );
-				Debug::log_request( $parsed_args );
+				Debug::log_string( __( 'Default API Found: ', 'aspireupdate' ) . $url );
 
 				if ( $this->default_host !== $this->redirected_host ) {
 					if ( $this->disable_ssl ) {
-						Debug::log_string( 'SSL Verification Disabled' );
+						Debug::log_string( __( 'SSL Verification Disabled', 'aspireupdate' ) );
 						$parsed_args['sslverify'] = false;
 					}
 
+					if ( '' !== $this->api_key ) {
+						Debug::log_string( __( 'API Key Authorization header added.', 'aspireupdate' ) );
+						$parsed_args['headers']['Authorization'] = 'Bearer ' . $this->api_key;
+					}
+
 					$updated_url = str_replace( $this->default_host, $this->redirected_host, $url );
-					Debug::log_string( 'API Rerouted to: ' . $updated_url );
+
+					/**
+					 * Adding cache buster parameter for AC beta test.  Will remove this after Beta.
+					 */
+					Debug::log_string( __( 'Cache Buster Added to URL', 'aspireupdate' ) );
+					$updated_url = add_query_arg( 'cache_buster', time(), $updated_url );
+
+					Debug::log_string( __( 'API Rerouted to: ', 'aspireupdate' ) . $updated_url );
+
+					Debug::log_request( $parsed_args );
 
 					/**
 					 * Temporarily Unhook Filter to prevent recursion.
