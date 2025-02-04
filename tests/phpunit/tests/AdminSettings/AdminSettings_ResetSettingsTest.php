@@ -12,6 +12,28 @@
  */
 class AdminSettings_ResetSettingsTest extends AdminSettings_UnitTestCase {
 	/**
+	 * Test that settings are not reset when the user does not have the required capability.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_should_not_reset_settings_when_the_user_does_not_have_the_required_capability() {
+		wp_set_current_user( self::$editor_id );
+		$_GET['reset']       = 'reset';
+		$_GET['reset-nonce'] = wp_create_nonce( 'aspireupdate-reset-nonce' );
+
+		$settings = [ 'api_host' => 'the.option.value' ];
+		update_site_option( self::$option_name, $settings );
+
+		$admin_settings = new \AspireUpdate\Admin_Settings();
+		$admin_settings->reset_settings();
+
+		unset( $_GET['reset'], $_GET['reset-nonce'] );
+
+		$this->assertSame( $settings, get_site_option( self::$option_name ) );
+	}
+
+	/**
 	 * Test that settings are not reset when $_GET['reset'] is not set.
 	 */
 	public function test_should_not_reset_settings_when_get_reset_is_not_set() {
@@ -146,6 +168,10 @@ class AdminSettings_ResetSettingsTest extends AdminSettings_UnitTestCase {
 		$_GET['reset']       = 'reset';
 		$_GET['reset-nonce'] = wp_create_nonce( 'aspireupdate-reset-nonce' );
 
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
+
 		$settings = [ 'api_host' => 'the.option.value' ];
 		update_site_option( self::$option_name, $settings );
 
@@ -166,6 +192,10 @@ class AdminSettings_ResetSettingsTest extends AdminSettings_UnitTestCase {
 	public function test_should_redirect_when_reset_requirements_are_met() {
 		$_GET['reset']       = 'reset';
 		$_GET['reset-nonce'] = wp_create_nonce( 'aspireupdate-reset-nonce' );
+
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
 
 		$settings = [ 'api_host' => 'the.option.value' ];
 		update_site_option( self::$option_name, $settings );
