@@ -41,6 +41,7 @@ class AdminSettings_RegisterAdminMenuTest extends AdminSettings_UnitTestCase {
 		$original_submenu = $submenu;
 
 		define( 'AP_REMOVE_UI', false );
+		wp_set_current_user( self::$editor_id );
 
 		$admin_settings = new \AspireUpdate\Admin_Settings();
 		$admin_settings->register_admin_menu();
