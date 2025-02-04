@@ -60,7 +60,12 @@ class Controller {
 	 * @return void
 	 */
 	public function clear_log() {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'aspireupdate-ajax' ) ) {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
+		if (
+			! current_user_can( $capability ) ||
+			! isset( $_POST['nonce'] ) ||
+			! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'aspireupdate-ajax' )
+		) {
 			wp_send_json_error(
 				[
 					'message' => __( 'Error: You are not authorized to access this resource.', 'aspireupdate' ),
