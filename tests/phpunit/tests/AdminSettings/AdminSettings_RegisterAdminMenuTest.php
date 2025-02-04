@@ -17,21 +17,6 @@
  * @covers \AspireUpdate\Admin_Settings::register_admin_menu
  */
 class AdminSettings_RegisterAdminMenuTest extends AdminSettings_UnitTestCase {
-	/**
-	 * The user ID of an administrator.
-	 *
-	 * @var int
-	 */
-	private static $admin_id;
-
-	/**
-	 * Create an administrator before any tests run.
-	 *
-	 * @return void
-	 */
-	public static function set_up_before_class() {
-		self::$admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
-	}
 
 	/**
 	 * Test that menu is not registered when AP_REMOVE_UI is enabled.
@@ -41,7 +26,6 @@ class AdminSettings_RegisterAdminMenuTest extends AdminSettings_UnitTestCase {
 		$original_submenu = $submenu;
 
 		define( 'AP_REMOVE_UI', true );
-		wp_set_current_user( self::$admin_id );
 
 		$admin_settings = new \AspireUpdate\Admin_Settings();
 		$admin_settings->register_admin_menu();
@@ -71,7 +55,6 @@ class AdminSettings_RegisterAdminMenuTest extends AdminSettings_UnitTestCase {
 		global $submenu;
 
 		define( 'AP_REMOVE_UI', false );
-		wp_set_current_user( self::$admin_id );
 		grant_super_admin( self::$admin_id );
 
 		$admin_settings = new \AspireUpdate\Admin_Settings();
