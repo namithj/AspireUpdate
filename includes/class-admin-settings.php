@@ -84,7 +84,9 @@ class Admin_Settings {
 	 * @return void
 	 */
 	public function reset_settings() {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
 		if (
+			current_user_can( $capability ) &&
 			isset( $_GET['reset'] ) &&
 			( 'reset' === $_GET['reset'] ) &&
 			isset( $_GET['reset-nonce'] ) &&
