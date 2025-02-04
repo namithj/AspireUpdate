@@ -125,6 +125,11 @@ class Admin_Settings {
 	 * @return void
 	 */
 	public function admin_notices() {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
+		if ( ! current_user_can( $capability ) ) {
+			return;
+		}
+
 		/**
 		 * The Admin Notice to convey a Reset Operation has happened.
 		 */
