@@ -12,6 +12,29 @@
  */
 class AdminSettings_UpdateSettingsTest extends AdminSettings_UnitTestCase {
 	/**
+	 * Test that settings are not updated when the user does not have the required capability.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_should_not_update_settings_when_the_user_does_not_have_the_required_capability() {
+		wp_set_current_user( self::$editor_id );
+		$_POST['_wpnonce']              = wp_create_nonce( self::$options_page );
+		$_POST['option_page']           = self::$option_name;
+		$_POST['aspireupdate_settings'] = [ 'api_host' => 'the.option.value' ];
+
+		$settings = get_site_option( self::$option_name, false );
+
+		$admin_settings = new AspireUpdate\Admin_Settings();
+		$admin_settings->update_settings();
+
+		$this->assertSame(
+			$settings,
+			get_site_option( self::$option_name, false )
+		);
+	}
+
+	/**
 	 * Test that settings are not updated when $_POST['_wpnonce'] is not set.
 	 */
 	public function test_should_not_update_settings_when_post_wpnonce_is_not_set() {
@@ -202,6 +225,10 @@ class AdminSettings_UpdateSettingsTest extends AdminSettings_UnitTestCase {
 		$_POST['option_page']           = self::$option_name;
 		$_POST['aspireupdate_settings'] = [ 'api_host' => 'the.option.value' ];
 
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
+
 		delete_site_option( self::$option_name );
 
 		$admin_settings = new AspireUpdate\Admin_Settings();
@@ -237,6 +264,10 @@ class AdminSettings_UpdateSettingsTest extends AdminSettings_UnitTestCase {
 		$_POST['_wpnonce']              = wp_create_nonce( self::$options_page );
 		$_POST['option_page']           = self::$option_name;
 		$_POST['aspireupdate_settings'] = [ 'api_host' => 'the.option.value' ];
+
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
 
 		$redirect = new MockAction();
 		add_filter( 'wp_redirect', [ $redirect, 'filter' ] );
