@@ -13,31 +13,7 @@
  *
  * @covers \AspireUpdate\Filesystem_Direct::put_contents
  */
-class FilesystemDirect_PutContentsTest extends WP_UnitTestCase {
-	private static $test_file = '/tmp/aspireupdate-putcontents-test-file.txt';
-
-	/**
-	 * Remove the test file should it exist before any tests run.
-	 */
-	public static function set_up_before_class() {
-		parent::set_up_before_class();
-
-		if ( file_exists( self::$test_file ) ) {
-			unlink( self::$test_file );
-		}
-	}
-
-	/**
-	 * Remove the test file should it exist after each test runs.
-	 */
-	public function tear_down() {
-		if ( file_exists( self::$test_file ) ) {
-			unlink( self::$test_file );
-		}
-
-		parent::tear_down();
-	}
-
+class FilesystemDirect_PutContentsTest extends FilesystemDirect_UnitTestCase {
 	/**
 	 * Test that false is returned when an invalid write mode is provided.
 	 */
