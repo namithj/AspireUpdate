@@ -31,6 +31,8 @@
 		</include>
 		<exclude>
 			<file>../../includes/autoload.php</file>
+			<file>../../aspire-update.php</file>
+			<directory>../../includes/views</directory>
 		</exclude>
 		<report>
 			<text outputFile="php://stdout" showOnlySummary="true"/>

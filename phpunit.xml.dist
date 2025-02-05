@@ -21,11 +21,12 @@
 	</groups>
 	<coverage includeUncoveredFiles="true" processUncoveredFiles="false" pathCoverage="false" cacheDirectory="./tests/phpunit/cache">
 		<include>
-			<file>./aspire-update.php</file>
 			<directory suffix=".php">./includes</directory>
 		</include>
 		<exclude>
 			<file>./includes/autoload.php</file>
+			<file>./aspire-update.php</file>
+			<directory>./includes/views</directory>
 		</exclude>
 		<report>
 			<text outputFile="php://stdout" showOnlySummary="true"/>
