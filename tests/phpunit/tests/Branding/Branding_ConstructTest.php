@@ -21,8 +21,8 @@ class Branding_ConstructTest extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_hooks_in_single_site( $hook, $method ) {
 		define( 'AP_ENABLE', true );
@@ -41,8 +41,8 @@ class Branding_ConstructTest extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_not_add_hooks_in_single_site( $hook, $method ) {
 		define( 'AP_ENABLE', false );
@@ -79,8 +79,8 @@ class Branding_ConstructTest extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_hooks_in_multisite( $hook, $method ) {
 		define( 'AP_ENABLE', true );
@@ -99,8 +99,8 @@ class Branding_ConstructTest extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_not_add_hooks_in_multisite( $hook, $method ) {
 		define( 'AP_ENABLE', false );

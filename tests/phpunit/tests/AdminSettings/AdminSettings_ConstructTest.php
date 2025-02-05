@@ -16,8 +16,8 @@ class AdminSettings_ConstructTest extends AdminSettings_UnitTestCase {
 	 *
 	 * @dataProvider data_hooks_and_methods
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_hooks( $hook, $method ) {
 		$admin_settings = new AspireUpdate\Admin_Settings();
@@ -41,7 +41,7 @@ class AdminSettings_ConstructTest extends AdminSettings_UnitTestCase {
 			],
 			'admin_init -> update_settings'   => [
 				'hook'   => 'admin_init',
-				'method' => 'register_settings',
+				'method' => 'update_settings',
 			],
 			'admin_enqueue_scripts -> admin_enqueue_scripts' => [
 				'hook'   => 'admin_enqueue_scripts',
@@ -57,8 +57,8 @@ class AdminSettings_ConstructTest extends AdminSettings_UnitTestCase {
 	 *
 	 * @group ms-excluded
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_single_site_hooks_in_single_site( $hook, $method ) {
 		$admin_settings = new AspireUpdate\Admin_Settings();
@@ -90,8 +90,8 @@ class AdminSettings_ConstructTest extends AdminSettings_UnitTestCase {
 	 *
 	 * @group ms-required
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_multisite_hooks_in_multisite( $hook, $method ) {
 		$admin_settings = new AspireUpdate\Admin_Settings();

@@ -46,3 +46,4 @@ require __DIR__ . '/includes/class-ap-fake-filesystem.php';
 // Load unit test abstract classes.
 require __DIR__ . '/includes/AdminSettings_UnitTestCase.php';
 require __DIR__ . '/includes/Debug_UnitTestCase.php';
+require __DIR__ . '/includes/FilesystemDirect_UnitTestCase.php';

@@ -18,6 +18,8 @@ class Branding_AdminEnqueueScriptsTest extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		wp_dequeue_style( 'aspire_update_settings_css' );
+
+		parent::tear_down();
 	}
 
 	/**
