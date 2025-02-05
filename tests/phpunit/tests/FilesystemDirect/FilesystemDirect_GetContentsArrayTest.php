@@ -20,6 +20,8 @@ class FilesystemDirect_GetContentsArrayTest extends WP_UnitTestCase {
 	 * Remove the test file should it exist before any tests run.
 	 */
 	public static function set_up_before_class() {
+		parent::set_up_before_class();
+
 		if ( file_exists( self::$test_file ) ) {
 			unlink( self::$test_file );
 		}
@@ -32,6 +34,8 @@ class FilesystemDirect_GetContentsArrayTest extends WP_UnitTestCase {
 		if ( file_exists( self::$test_file ) ) {
 			unlink( self::$test_file );
 		}
+
+		parent::tear_down();
 	}
 
 	/**
