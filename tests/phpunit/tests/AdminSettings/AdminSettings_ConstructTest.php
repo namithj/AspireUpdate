@@ -41,7 +41,7 @@ class AdminSettings_ConstructTest extends AdminSettings_UnitTestCase {
 			],
 			'admin_init -> update_settings'   => [
 				'hook'   => 'admin_init',
-				'method' => 'register_settings',
+				'method' => 'update_settings',
 			],
 			'admin_enqueue_scripts -> admin_enqueue_scripts' => [
 				'hook'   => 'admin_enqueue_scripts',
