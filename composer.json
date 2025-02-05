@@ -32,7 +32,6 @@
         ],
         "test:multisite": [
             "Composer\\Config::disableProcessTimeout",
-            "@php ./vendor/phpunit/phpunit/phpunit -c tests/multisite.xml"
-        ]
+            "@php ./vendor/phpunit/phpunit/phpunit -c tests/phpunit/multisite.xml"
     }
 }
