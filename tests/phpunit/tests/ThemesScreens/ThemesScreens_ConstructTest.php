@@ -23,8 +23,8 @@ class ThemesScreens_ConstructTest extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_hooks_and_methods
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_hooks( $hook, $method ) {
 		define( 'AP_ENABLE', true );
@@ -38,8 +38,8 @@ class ThemesScreens_ConstructTest extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_hooks_and_methods
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_not_add_hooks( $hook, $method ) {
 		define( 'AP_ENABLE', false );

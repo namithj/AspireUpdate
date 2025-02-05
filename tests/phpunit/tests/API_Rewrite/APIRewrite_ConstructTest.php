@@ -16,8 +16,8 @@ class APIRewrite_ConstructTest extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_hooks_and_methods
 	 *
-	 * @string $hook   The hook's name.
-	 * @string $method The method to hook.
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
 	 */
 	public function test_should_add_hooks( $hook, $method ) {
 		$api_rewrite = new AspireUpdate\API_Rewrite( 'debug', false, '' );
