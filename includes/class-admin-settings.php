@@ -84,7 +84,9 @@ class Admin_Settings {
 	 * @return void
 	 */
 	public function reset_settings() {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
 		if (
+			current_user_can( $capability ) &&
 			isset( $_GET['reset'] ) &&
 			( 'reset' === $_GET['reset'] ) &&
 			isset( $_GET['reset-nonce'] ) &&
@@ -123,6 +125,11 @@ class Admin_Settings {
 	 * @return void
 	 */
 	public function admin_notices() {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
+		if ( ! current_user_can( $capability ) ) {
+			return;
+		}
+
 		/**
 		 * The Admin Notice to convey a Reset Operation has happened.
 		 */
@@ -259,7 +266,12 @@ class Admin_Settings {
 	 */
 	public function update_settings() {
 		// Exit if improper privileges.
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ), 'aspireupdate-settings' ) ) {
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
+		if (
+			! current_user_can( $capability ) ||
+			! isset( $_POST['_wpnonce'] ) ||
+			! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ), 'aspireupdate-settings' )
+		) {
 			return;
 		}
 

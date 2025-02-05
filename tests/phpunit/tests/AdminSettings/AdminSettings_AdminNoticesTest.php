@@ -12,6 +12,29 @@
  */
 class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 	/**
+	 * Test that the reset notice is not output when the user does not have the required capability.
+	 */
+	public function test_should_not_output_reset_notice_when_the_user_does_not_have_the_required_capability() {
+		wp_set_current_user( self::$editor_id );
+
+		$this->assertFalse(
+			current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ),
+			'The user has the required capability.'
+		);
+
+		update_site_option( 'aspireupdate-reset', 'true' );
+		$_GET['reset-success']       = 'success';
+		$_GET['reset-success-nonce'] = wp_create_nonce( 'aspireupdate-reset-success-nonce' );
+
+		$admin_settings = new \AspireUpdate\Admin_Settings();
+		$actual         = get_echo( [ $admin_settings, 'admin_notices' ] );
+
+		unset( $_GET['reset-success'], $_GET['reset-success-nonce'] );
+
+		$this->assertEmpty( $actual );
+	}
+
+	/**
 	 * Test that the reset notice is not output when the 'aspireupdate-reset' option is not set to (string) "true".
 	 */
 	public function test_should_not_output_reset_notice_when_aspireupdatereset_option_is_not_set_to_true() {
@@ -104,6 +127,10 @@ class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 		$_GET['reset-success']       = 'success';
 		$_GET['reset-success-nonce'] = wp_create_nonce( 'aspireupdate-reset-success-nonce' );
 
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
+
 		$admin_settings = new \AspireUpdate\Admin_Settings();
 		$actual         = get_echo( [ $admin_settings, 'admin_notices' ] );
 
@@ -122,6 +149,10 @@ class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 		update_site_option( 'aspireupdate-reset', 'true' );
 		$_GET['reset-success']       = 'success';
 		$_GET['reset-success-nonce'] = wp_create_nonce( 'aspireupdate-reset-success-nonce' );
+
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
 
 		$admin_settings = new \AspireUpdate\Admin_Settings();
 		get_echo( [ $admin_settings, 'admin_notices' ] );
@@ -162,6 +193,10 @@ class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 	 */
 	public function test_should_output_saved_notice() {
 		$_GET['settings-updated-wpnonce'] = wp_create_nonce( 'aspireupdate-settings-updated-nonce' );
+
+		if ( is_multisite() ) {
+			grant_super_admin( wp_get_current_user()->ID );
+		}
 
 		$admin_settings = new \AspireUpdate\Admin_Settings();
 		$actual         = get_echo( [ $admin_settings, 'admin_notices' ] );
