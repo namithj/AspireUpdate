@@ -1,6 +1,6 @@
 <?php
 /**
- * Class PutContentsTest
+ * Class FilesystemDirect_PutContentsTest
  *
  * @package AspireUpdate
  */
@@ -13,7 +13,7 @@
  *
  * @covers \AspireUpdate\Filesystem_Direct::put_contents
  */
-class PutContentsTest extends WP_UnitTestCase {
+class FilesystemDirect_PutContentsTest extends WP_UnitTestCase {
 	private static $test_file = '/tmp/aspireupdate-putcontents-test-file.txt';
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Class GetContentsArrayTest
+ * Class FilesystemDirect_GetContentsArrayTest
  *
  * @package AspireUpdate
  */
@@ -13,7 +13,7 @@
  *
  * @covers \AspireUpdate\Filesystem_Direct::get_contents_array
  */
-class GetContentsArrayTest extends WP_UnitTestCase {
+class FilesystemDirect_GetContentsArrayTest extends WP_UnitTestCase {
 	private static $test_file = '/tmp/aspireupdate-getcontentsarray-test-file.txt';
 
 	/**
