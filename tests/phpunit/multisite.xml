@@ -36,7 +36,7 @@
 		</exclude>
 		<report>
 			<text outputFile="php://stdout" showOnlySummary="true"/>
-			<html outputDirectory="./coverage"/>
+			<html outputDirectory="./coverage/html/multisite"/>
 		</report>
 	</coverage>
 </phpunit>

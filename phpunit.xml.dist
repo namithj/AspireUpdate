@@ -30,7 +30,7 @@
 		</exclude>
 		<report>
 			<text outputFile="php://stdout" showOnlySummary="true"/>
-			<html outputDirectory="./tests/phpunit/coverage"/>
+			<html outputDirectory="./tests/phpunit/coverage/html/single-site"/>
 		</report>
 	</coverage>
 </phpunit>
