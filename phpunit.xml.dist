@@ -19,7 +19,7 @@
 			<group>ms-required</group>
 		</exclude>
 	</groups>
-	<coverage includeUncoveredFiles="true" processUncoveredFiles="false" pathCoverage="true" cacheDirectory="./tests/phpunit/cache">
+	<coverage includeUncoveredFiles="true" processUncoveredFiles="false" pathCoverage="false" cacheDirectory="./tests/phpunit/cache">
 		<include>
 			<file>./aspire-update.php</file>
 			<directory suffix=".php">./includes</directory>

@@ -25,7 +25,7 @@
 			<group>ms-excluded</group>
 		</exclude>
 	</groups>
-	<coverage includeUncoveredFiles="true" processUncoveredFiles="false" pathCoverage="true" cacheDirectory="./cache">
+	<coverage includeUncoveredFiles="true" processUncoveredFiles="false" pathCoverage="false" cacheDirectory="./cache">
 		<include>
 			<directory suffix=".php">../../includes</directory>
 		</include>
