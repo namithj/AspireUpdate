@@ -81,7 +81,7 @@ class AdminSettings_GetSettingTest extends AdminSettings_UnitTestCase {
 	}
 
 	/**
-	 * Data provider with different valeus for options and constants.
+	 * Data provider with different values for options and constants.
 	 *
 	 * @return array[]
 	 */
