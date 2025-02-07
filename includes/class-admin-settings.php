@@ -437,6 +437,16 @@ class Admin_Settings {
 						'api-key-url'     => 'api.aspirecloud.net/v1/apitoken',
 					],
 					[
+						'value'           => 'api.aspirecloud.io',
+						'label'           => sprintf(
+							/* translators: 1: The name of the API Service */
+							__( 'AspireCloud Bleeding Edge (%1$s)', 'aspireupdate' ),
+							'api.aspirecloud.io'
+						),
+						'require-api-key' => 'false',
+						'api-key-url'     => 'api.aspirecloud.net/v1/apitoken',
+					],
+					[
 						'value'           => 'other',
 						'label'           => esc_html__( 'Other', 'aspireupdate' ),
 						'require-api-key' => 'false',
