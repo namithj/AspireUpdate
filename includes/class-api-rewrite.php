@@ -76,17 +76,16 @@ class API_Rewrite {
 	}
 
 	/**
-	 * Add Accept JSON header if the request is not for downloading a file.
+	 * Add Accept JSON header if the request is not for a file asset.
 	 *
 	 * @param array $args The HTTP request arguments.
 	 *
 	 * @return array $args The modified HTTP request arguments.
 	 */
 	private function add_accept_json_header( $args, $url ) {
-		$file_extensions = [ 'zip', 'tar', 'gz', 'rar' ];
-		$path            = wp_parse_url( $url, PHP_URL_PATH );
-		$extension       = wp_check_filetype( $path )['ext'];
-		if ( ! $extension || ! in_array( strtolower( $extension ), $file_extensions, true ) ) {
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+		// Check if the URL points to a .php file or has no extension.
+		if ( preg_match( '/\/[^\/]+\.(php)$/', $path ) || preg_match( '/\/[^\/]+\/$/', $path ) ) {
 			Debug::log_string( __( 'Accept JSON Header added for API calls.', 'aspireupdate' ) );
 			if ( ! isset( $args['headers'] ) ) {
 				$args['headers'] = [];
