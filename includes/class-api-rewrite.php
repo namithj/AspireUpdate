@@ -85,7 +85,7 @@ class API_Rewrite {
 	private function add_accept_json_header( $args, $url ) {
 		$path = wp_parse_url( $url, PHP_URL_PATH );
 		// Check if the URL points to a .php file or has no extension.
-		if ( preg_match( '/\/[^\/]+\.(php)$/', $path ) || preg_match( '/\/[^\/]+\/$/', $path ) ) {
+		if ( preg_match( '#/[^/]+(\.php|/)$#', $path ) ) {
 			Debug::log_string( __( 'Accept JSON Header added for API calls.', 'aspireupdate' ) );
 			if ( ! isset( $args['headers'] ) ) {
 				$args['headers'] = [];
