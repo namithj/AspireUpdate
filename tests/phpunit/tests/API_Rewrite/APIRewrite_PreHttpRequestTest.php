@@ -93,6 +93,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 
 	/**
 	 * Test that the default host is replaced with the redirected host.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_cache_buster
 	 */
 	public function test_should_replace_default_host_with_redirected_host() {
 		$actual = '';
@@ -115,6 +117,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 
 	/**
 	 * Test that the API Key is added to the Authorization header.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_authorization_header
 	 */
 	public function test_should_add_api_key_to_authorization_header_when_present() {
 		$actual = [];
