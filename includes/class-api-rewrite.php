@@ -58,6 +58,56 @@ class API_Rewrite {
 	}
 
 	/**
+	 * Add Authorization Header if API Key found.
+	 *
+	 * @param array $args The HTTP request arguments.
+	 *
+	 * @return array $args The modified HTTP request arguments.
+	 */
+	private function add_authorization_header( $args ) {
+		if ( '' !== $this->api_key ) {
+			Debug::log_string( __( 'API Key Authorization header added.', 'aspireupdate' ) );
+			if ( ! isset( $args['headers'] ) ) {
+				$args['headers'] = [];
+			}
+			$args['headers']['Authorization'] = 'Bearer ' . $this->api_key;
+		}
+		return $args;
+	}
+
+	/**
+	 * Add Accept JSON header if the request is not for a file asset.
+	 *
+	 * @param array $args The HTTP request arguments.
+	 *
+	 * @return array $args The modified HTTP request arguments.
+	 */
+	private function add_accept_json_header( $args, $url ) {
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+		// Check if the URL points to a .php file or has no extension.
+		if ( preg_match( '#/[^/]+(\.php|/)$#', $path ) ) {
+			Debug::log_string( __( 'Accept JSON Header added for API calls.', 'aspireupdate' ) );
+			if ( ! isset( $args['headers'] ) ) {
+				$args['headers'] = [];
+			}
+			$args['headers']['Accept'] = 'application/json';
+		}
+		return $args;
+	}
+
+	/**
+	 * Adding cache buster parameter for AC beta test.  Will remove this after Beta.
+	 *
+	 * @param string $url The URL.
+	 *
+	 * @return string $url The updated URL.
+	 */
+	private function add_cache_buster( $url ) {
+		Debug::log_string( __( 'Cache Buster Added to URL', 'aspireupdate' ) );
+		return add_query_arg( 'cache_buster', time(), $url );
+	}
+
+	/**
 	 * Rewrite the API End points.
 	 *
 	 * @param mixed  $response The response for the request.
@@ -82,19 +132,11 @@ class API_Rewrite {
 						$parsed_args['sslverify'] = false;
 					}
 
-					if ( '' !== $this->api_key ) {
-						Debug::log_string( __( 'API Key Authorization header added.', 'aspireupdate' ) );
-						$parsed_args['headers']['Authorization'] = 'Bearer ' . $this->api_key;
-					}
+					$parsed_args = $this->add_authorization_header( $parsed_args );
+					$parsed_args = $this->add_accept_json_header( $parsed_args, $url );
+					$url         = $this->add_cache_buster( $url );
 
 					$updated_url = str_replace( $this->default_host, $this->redirected_host, $url );
-
-					/**
-					 * Adding cache buster parameter for AC beta test.  Will remove this after Beta.
-					 */
-					Debug::log_string( __( 'Cache Buster Added to URL', 'aspireupdate' ) );
-					$updated_url = add_query_arg( 'cache_buster', time(), $updated_url );
-
 					Debug::log_string( __( 'API Rerouted to: ', 'aspireupdate' ) . $updated_url );
 
 					Debug::log_request( $parsed_args );

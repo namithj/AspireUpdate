@@ -93,6 +93,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 
 	/**
 	 * Test that the default host is replaced with the redirected host.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_cache_buster
 	 */
 	public function test_should_replace_default_host_with_redirected_host() {
 		$actual = '';
@@ -115,6 +117,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 
 	/**
 	 * Test that the API Key is added to the Authorization header.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_authorization_header
 	 */
 	public function test_should_add_api_key_to_authorization_header_when_present() {
 		$actual = [];
@@ -164,6 +168,225 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			"Bearer $api_key",
 			$actual['headers']['Authorization'],
 			'The authorization header is wrong.'
+		);
+	}
+
+	/**
+	 * Test that the Accept header is added for JSON.
+	 *
+	 * @dataProvider data_accept_json_paths
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_accept_json_header
+	 *
+	 * @param string $path The path to add to the URL.
+	 */
+	public function test_should_add_accept_header_with_json( $path ) {
+		$actual = [];
+
+		add_filter(
+			'pre_http_request',
+			static function ( $response, $parsed_args ) use ( &$actual ) {
+				$actual = $parsed_args;
+				return $response;
+			},
+			10,
+			2
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, 'MY_API_KEY' );
+		$api_rewrite->pre_http_request(
+			[],
+			[],
+			untrailingslashit( $this->get_default_host() ) . $path
+		);
+
+		$this->assertIsArray(
+			$actual,
+			'Parsed arguments is not an array.'
+		);
+
+		$this->assertArrayHasKey(
+			'headers',
+			$actual,
+			'The "headers" key is not present.'
+		);
+
+		$this->assertIsArray(
+			$actual['headers'],
+			'The "headers" value is not an array.'
+		);
+
+		$this->assertArrayHasKey(
+			'Accept',
+			$actual['headers'],
+			'There is no accept header.'
+		);
+
+		$this->assertIsString(
+			$actual['headers']['Accept'],
+			'The accept header is not a string.'
+		);
+
+		$this->assertSame(
+			'application/json',
+			$actual['headers']['Accept'],
+			'The accept header is wrong.'
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public function data_accept_json_paths() {
+		return [
+			'a PHP file'                                  => [
+				'path' => '/files/file.php',
+			],
+			'a PHP file with a period'                    => [
+				'path' => '/files/file.file.php',
+			],
+			'no extension, a period and a trailing slash' => [
+				'path' => '/files/file.file/',
+			],
+			'no extension and a trailing slash'           => [
+				'path' => '/files/file/',
+			],
+		];
+	}
+
+	/**
+	 * Test that the Accept header is not added for JSON when a non-PHP file
+	 * is requested.
+	 *
+	 * @dataProvider data_do_not_accept_json_paths
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_accept_json_header
+	 *
+	 * @param string $path The path to add to the URL.
+	 */
+	public function test_should_not_add_accept_header_with_json( $path ) {
+		$actual = [];
+
+		add_filter(
+			'pre_http_request',
+			static function ( $response, $parsed_args ) use ( &$actual ) {
+				$actual = $parsed_args;
+				return $response;
+			},
+			10,
+			2
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, 'MY_API_KEY' );
+		$api_rewrite->pre_http_request(
+			[],
+			[],
+			$this->get_default_host() . $path
+		);
+
+		$this->assertIsArray(
+			$actual,
+			'Parsed arguments is not an array.'
+		);
+
+		$this->assertArrayHasKey(
+			'headers',
+			$actual,
+			'The "headers" key is not present.'
+		);
+
+		$this->assertIsArray(
+			$actual['headers'],
+			'The "headers" value is not an array.'
+		);
+
+		$this->assertArrayNotHasKey(
+			'Accept',
+			$actual['headers'],
+			'There should not be an accept header.'
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public function data_do_not_accept_json_paths() {
+		return [
+			'a ZIP extension'   => [
+				'path' => '/file.zip',
+			],
+			'an HTML extension' => [
+				'path' => '/index.html',
+			],
+			'a PDF extension'   => [
+				'path' => '/file.pdf',
+			],
+			'a JPG extension'   => [
+				'path' => '/file.jpg',
+			],
+			'a PNG extension'   => [
+				'path' => '/file.png',
+			],
+			'a GIF extension'   => [
+				'path' => '/file.gif',
+			],
+			'a WEBP extension'  => [
+				'path' => '/file.webp',
+			],
+			'a WEBM extension'  => [
+				'path' => '/file.webm',
+			],
+			'no trailing slash' => [
+				'path' => '/file',
+			],
+		];
+	}
+
+	/**
+	 * Test that the headers array is created if it does not already exist when adding
+	 * the Accept header.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::add_accept_json_header
+	 */
+	public function test_should_create_headers_array_if_it_does_not_already_exist_when_adding_the_accept_header() {
+		$actual = [];
+
+		add_filter(
+			'pre_http_request',
+			static function ( $response, $parsed_args ) use ( &$actual ) {
+				$actual = $parsed_args;
+				return $response;
+			},
+			10,
+			2
+		);
+
+		// No API key ensures no Authorization header will be already set.
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$api_rewrite->pre_http_request(
+			[],
+			[],
+			$this->get_default_host() . '/file.php'
+		);
+
+		$this->assertIsArray(
+			$actual,
+			'Parsed arguments is not an array.'
+		);
+
+		$this->assertArrayHasKey(
+			'headers',
+			$actual,
+			'The "headers" key is not present.'
+		);
+
+		$this->assertIsArray(
+			$actual['headers'],
+			'The "headers" value is not an array.'
 		);
 	}
 
