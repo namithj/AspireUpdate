@@ -100,6 +100,10 @@ Issues that are not filed with this information will be closed. We will do our b
 
 ## CHANGELOG
 
+0.6.1 - Feb 12 2025
+* Added AspireCloud.io endpoint for bleeding edge testing
+* Added content type json header for better error retrieval from AC
+
 0.6 - Nov 13 2024
 * Admin Settings: Added notices for when settings are saved or reset
 * Branding: Added branded notices to inform users when AspireUpdate is in operation on a screen

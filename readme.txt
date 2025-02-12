@@ -3,7 +3,7 @@ Contributors: sarah-savage, namithj, asirota
 Donate link: https://github.com/sponsors/aspirepress
 Requires at least: 5.3
 Tested up to: 6.7
-Stable tag: 0.6
+Stable tag: 0.6.1
 Requires PHP: 7.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,10 @@ Answer to foo bar dilemma.
 2. This is the second screen shot
 
 == Changelog ==
+
+= 0.6.1 =
+* Added AspireCloud.io endpoint for bleeding edge testing
+* Added content type json header for better error retrieval from AC
 
 = 0.6 =
 * Admin Settings: Added notices for when settings are saved or reset
