@@ -4,6 +4,7 @@
 .phpunit.result.cache
 /phpunit.xml
 /vendor/*
+/node_modules/*
 .cache/*
 /tests/phpunit/cache
 /tests/phpunit/coverage

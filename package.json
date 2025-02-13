@@ -1,0 +1,16 @@
+{
+  "name": "aspire-update",
+  "version": "0.6.1",
+  "description": "This plugin allows a WordPress user to automatically rewrite certain URLs and URL paths to a new URL. This is helpful because it allows for the rewriting of `api.wordpress.org` to some other repository that contains the plugins the user wants.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspirepress/aspireupdate.git"
+  },
+  "keywords": [],
+  "author": "AspireUpdate",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/aspirepress/aspireupdate/issues"
+  },
+  "homepage": "https://github.com/aspirepress/aspireupdate#readme"
+}
