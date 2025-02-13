@@ -12,5 +12,15 @@
   "bugs": {
     "url": "https://github.com/aspirepress/aspireupdate/issues"
   },
-  "homepage": "https://github.com/aspirepress/aspireupdate#readme"
+  "homepage": "https://github.com/aspirepress/aspireupdate#readme",
+  "scripts": {
+    "wp-env": "wp-env",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env:clean": "wp-env clean",
+    "env:destroy": "wp-env destroy"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^10.18.0"
+  }
 }
