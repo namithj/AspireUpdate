@@ -35,12 +35,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         storageState: path.join(__dirname, 'artifacts', '.auth', 'user.json' ),
-      }
+      },
+      dependencies: ['setup']
     },
 
     {
@@ -48,7 +51,8 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         storageState: path.join(__dirname, 'artifacts', '.auth', 'user.json' ),
-      }
+      },
+      dependencies: ['setup']
     }
   ]
 });
