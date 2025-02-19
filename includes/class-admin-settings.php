@@ -296,10 +296,10 @@ class Admin_Settings {
 	}
 
 	/**
-	 * Undocumented function
+	 * Set the plugin row's action links.
 	 *
-	 * @param array $links
-	 * @return array $links
+	 * @param array $links The existing action links.
+	 * @return array The modified action links.
 	 */
 	public function plugin_action_links( $links ) {
 		$settings_url    = network_admin_url( 'index.php?page=aspireupdate-settings' );
