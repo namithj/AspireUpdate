@@ -1,7 +1,7 @@
 {
     "name": "afragen/autoloader",
     "description": "PSR-4 style autoloader and classmap loader.",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "type": "library",
     "keywords": [
         "autoload"
@@ -23,6 +23,6 @@
     ],
     "prefer-stable": true,
     "require": {
-        "php": ">=5.6"
+        "php": ">=7.1"
     }
 }

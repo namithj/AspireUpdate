@@ -1,3 +1,6 @@
+#### 3.0.1 / 2025-20-19
+* fix PHP8.4 use explicit nullable type from PHP7.1
+
 #### 3.0.0
 * refactor as composer library, though likely better to just use composer's autoloader
 
