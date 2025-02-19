@@ -55,7 +55,7 @@ if ( ! class_exists( 'Fragen\\Autoloader' ) ) {
 		 * @param array|null $static_map Array of classes that deviate from convention.
 		 *                               Defaults to null.
 		 */
-		public function __construct( array $roots, array $static_map = null ) {
+		public function __construct( array $roots, ?array $static_map = null ) {
 			$this->roots = $roots;
 			if ( null !== $static_map ) {
 				$this->map = $static_map;
