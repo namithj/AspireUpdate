@@ -44,8 +44,8 @@ class Admin_Settings {
 	 * The Constructor.
 	 */
 	public function __construct() {
-
 		add_action( is_multisite() ? 'network_admin_menu' : 'admin_menu', [ $this, 'register_admin_menu' ] );
+		add_filter( 'plugin_action_links_aspireupdate/aspire-update.php', [ $this, 'plugin_action_links' ] );
 		add_action( 'admin_init', [ $this, 'reset_settings' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( is_multisite() ? 'network_admin_notices' : 'admin_notices', [ $this, 'admin_notices' ] );
@@ -293,6 +293,25 @@ class Admin_Settings {
 			);
 			! defined( 'AP_RUN_TESTS' ) && exit;
 		}
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param array $links
+	 * @return array $links
+	 */
+	public function plugin_action_links( $links ) {
+		$settings_url    = network_admin_url( 'index.php?page=aspireupdate-settings' );
+		$deactivate_link = $links['deactivate'];
+		unset( $links['deactivate'] );
+		return array_merge(
+			[
+				'deactivate' => $deactivate_link,
+				'settings'   => '<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'aspireupdate' ) . '</a>',
+			],
+			$links
+		);
 	}
 
 	/**
