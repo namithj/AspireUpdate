@@ -391,9 +391,65 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that a WP_Error object is returned for non-200 HTTP responses.
+	 * Test that a WP_Error object is not returned for some response codes.
+	 *
+	 * @dataProvider data_response_codes_that_should_not_error
+	 *
+	 * @param int $response_code The response code.
 	 */
-	public function test_should_return_wp_error_for_non_200_responses() {
+	public function test_should_not_return_wp_error_for_some_response_codes( $response_code ) {
+		add_filter(
+			'pre_http_request',
+			static function () use ( $response_code ) {
+				return [
+					'response' => [
+						'code'    => $response_code,
+						'message' => 'Test response code',
+					],
+				];
+			},
+			10,
+			2
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[],
+			$this->get_default_host() . '/file.php'
+		);
+
+		$this->assertNotInstanceOf(
+			'WP_Error',
+			$actual,
+			'A WP_Error object was returned.'
+		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public function data_response_codes_that_should_not_error() {
+		return [
+			'200' => [
+				'response_code' => 200,
+			],
+			'404' => [
+				'response_code' => 404,
+			],
+		];
+	}
+
+	/**
+	 * Test that a WP_Error object is returned for other HTTP response codes.
+	 *
+	 * @dataProvider data_response_codes_that_should_error
+	 *
+	 * @param int $response_code The response code.
+	 */
+	public function test_should_return_wp_error_for_other_response_codes( $response_code ) {
 		add_filter(
 			'pre_http_request',
 			static function () {
@@ -426,6 +482,24 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			$actual->get_error_code(),
 			'The wrong error code was returned.'
 		);
+	}
+
+	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public function data_response_codes_that_should_error() {
+		$datasets = [];
+
+		$exceptions = [ 200, 404 ];
+		for ( $i = 100; $i < 600; ++$i ) {
+			if ( ! in_array( $i, $exceptions, true ) ) {
+				$datasets[ $i ] = [ 'response_code' => $i ];
+			}
+		}
+
+		return $datasets;
 	}
 
 	/**
