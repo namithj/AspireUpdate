@@ -150,7 +150,8 @@ class API_Rewrite {
 
 					Debug::log_response( $response );
 
-					if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+					$response_code = wp_remote_retrieve_response_code( $response );
+					if ( 200 !== $response_code && 404 !== $response_code ) {
 						$message = wp_remote_retrieve_response_message( $response );
 						Debug::log_string(
 							sprintf(
