@@ -211,11 +211,12 @@ class ApiRewrites {
 	static other_hosts = {
 		field: jQuery('#aspireupdate-settings-field-api_host_other'),
 		init() {
-			ApiRewrites.other_hosts.field.on("blur", function () {
+			ApiRewrites.other_hosts.field.on("blur", function (field) {
 				let value = ApiRewrites.other_hosts.field.val();
-				value = ApiRewrites.other_hosts.strip_protocol(value);
-				value = ApiRewrites.other_hosts.strip_dangerous_characters(value);
-				ApiRewrites.other_hosts.field.val(value);
+
+				if (! URL.parse(value)) {
+					field.currentTarget.setCustomValidity('');
+				}
 			});
 		},
 		show() {
@@ -232,14 +233,6 @@ class ApiRewrites {
 		},
 		remove_required() {
 			ApiRewrites.other_hosts.field.prop('required', false);
-		},
-		strip_protocol(value) {
-			const protocol_regex = /^(https?|ftp|sftp|smtp|ftps|file):\/\/|^www\./i;
-			return value.replace(protocol_regex, '');
-		},
-		strip_dangerous_characters(value) {
-			const dangerous_characters_regex = /[<>/"'&;]/g;
-			return value.replace(dangerous_characters_regex, '');
 		}
 	}
 
