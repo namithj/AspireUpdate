@@ -630,7 +630,8 @@ class Admin_Settings {
 				</select>
 				<p>
 					<input
-						type="text"
+						type="url"
+						pattern="(https?)://.*"
 						id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>_other"
 						name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>_other]"
 						value="<?php echo esc_attr( $options[ $id . '_other' ] ?? '' ); ?>"
