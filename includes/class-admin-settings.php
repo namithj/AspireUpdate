@@ -302,13 +302,10 @@ class Admin_Settings {
 	 * @return array The modified action links.
 	 */
 	public function plugin_action_links( $links ) {
-		$settings_url    = network_admin_url( 'index.php?page=aspireupdate-settings' );
-		$deactivate_link = $links['deactivate'];
-		unset( $links['deactivate'] );
+		$settings_url = network_admin_url( 'index.php?page=aspireupdate-settings' );
 		return array_merge(
 			[
-				'deactivate' => $deactivate_link,
-				'settings'   => '<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'aspireupdate' ) . '</a>',
+				'settings' => '<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'aspireupdate' ) . '</a>',
 			],
 			$links
 		);
