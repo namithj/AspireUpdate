@@ -135,8 +135,12 @@ class API_Rewrite {
 					$parsed_args = $this->add_authorization_header( $parsed_args );
 					$parsed_args = $this->add_accept_json_header( $parsed_args, $url );
 					$url         = $this->add_cache_buster( $url );
-
-					$updated_url = str_replace( $this->default_host, $this->redirected_host, $url );
+					$protocol    = wp_parse_url( $url, PHP_URL_SCHEME );
+					$updated_url = str_replace(
+						"{$protocol}://{$this->default_host}",
+						untrailingslashit( $this->redirected_host ),
+						$url
+					);
 					Debug::log_string( __( 'API Rerouted to: ', 'aspireupdate' ) . $updated_url );
 
 					Debug::log_request( $parsed_args );
