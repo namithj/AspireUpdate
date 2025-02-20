@@ -391,6 +391,44 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a WP_Error object is returned for non-200 HTTP responses.
+	 */
+	public function test_should_return_wp_error_for_non_200_responses() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'response' => [
+						'code'    => 401,
+						'message' => 'Unauthorized.',
+					],
+				];
+			},
+			10,
+			2
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[],
+			$this->get_default_host() . '/file.php'
+		);
+
+		$this->assertInstanceOf(
+			'WP_Error',
+			$actual,
+			'A WP_Error object was not returned.'
+		);
+
+		$this->assertSame(
+			'failed_request',
+			$actual->get_error_code(),
+			'The wrong error code was returned.'
+		);
+	}
+
+	/**
 	 * Gets the default host.
 	 *
 	 * @return string The default host.
