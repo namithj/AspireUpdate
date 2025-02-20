@@ -503,6 +503,30 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a WP_Error object is returned for a redirected_host that's an invalid URL.
+	 */
+	public function test_should_return_wp_error_for_redirected_host_that_is_an_invalid_url() {
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[],
+			'https://' . $this->get_default_host() . '/file.php'
+		);
+
+		$this->assertInstanceOf(
+			'WP_Error',
+			$actual,
+			'A WP_Error object was not returned.'
+		);
+
+		$this->assertSame(
+			'invalid_host',
+			$actual->get_error_code(),
+			'The wrong error code was returned.'
+		);
+	}
+
+	/**
 	 * Gets the default host.
 	 *
 	 * @return string The default host.
