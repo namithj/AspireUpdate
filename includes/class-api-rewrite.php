@@ -150,6 +150,18 @@ class API_Rewrite {
 
 					Debug::log_response( $response );
 
+					if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+						$message = wp_remote_retrieve_response_message( $response );
+						Debug::log_string(
+							sprintf(
+								/* translators: %s: The response message. */
+								__( 'Request Failed: %s', 'aspireupdate' ),
+								$message
+							)
+						);
+						return new \WP_Error( 'failed_request', $message );
+					}
+
 					return $response;
 
 				}
