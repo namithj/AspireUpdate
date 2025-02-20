@@ -151,10 +151,9 @@ class API_Rewrite {
 					Debug::log_response( $response );
 
 					if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-						return new \WP_Error(
-							'failed_request',
-							wp_remote_retrieve_response_message( $response )
-						);
+						$message = wp_remote_retrieve_response_message( $response );
+						Debug::log_string( $message );
+						return new \WP_Error( 'failed_request', $message );
 					}
 
 					return $response;
