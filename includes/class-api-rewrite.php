@@ -126,6 +126,18 @@ class API_Rewrite {
 			if ( false !== strpos( $url, $this->default_host ) ) {
 				Debug::log_string( __( 'Default API Found: ', 'aspireupdate' ) . $url );
 
+				if ( false === filter_var( $this->redirected_host, FILTER_VALIDATE_URL ) ) {
+					$error_message = __( 'Your API host is not a valid URL.' );
+					Debug::log_string(
+						sprintf(
+							/* translators: %s: The error message. */
+							__( 'Request Failed: %s', 'aspireupdate' ),
+							$error_message
+						)
+					);
+					return new \WP_Error( 'invalid_host', $error_message );
+				}
+
 				if ( $this->default_host !== $this->redirected_host ) {
 					if ( $this->disable_ssl ) {
 						Debug::log_string( __( 'SSL Verification Disabled', 'aspireupdate' ) );
