@@ -440,7 +440,7 @@ class Admin_Settings {
 				'id'          => 'api_host',
 				'type'        => 'hosts',
 				'data'        => $options,
-				'description' => esc_html__( 'Your new API Host.', 'aspireupdate' ),
+				'description' => esc_html__( 'Your new API Host. Ensure that it starts with http:// or https://', 'aspireupdate' ),
 				'options'     => [
 					[
 						'value'           => 'api.aspirecloud.net',
