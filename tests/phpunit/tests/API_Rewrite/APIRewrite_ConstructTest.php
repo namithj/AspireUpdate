@@ -32,6 +32,26 @@ class APIRewrite_ConstructTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that hooks are not added when API rewriting is disabled.
+	 *
+	 * This test causes constants to be defined.
+	 * It must run in a separate process and must not preserve global state.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 *
+	 * @dataProvider data_hooks_and_methods
+	 *
+	 * @param string $hook   The hook's name.
+	 * @param string $method The method to hook.
+	 */
+	public function test_should_not_add_hooks( $hook, $method ) {
+		define( 'AP_ENABLE', false );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'debug', false, '' );
+		$this->assertFalse( has_action( $hook, [ $api_rewrite, $method ] ) );
+	}
+
+	/**
 	 * Data provider.
 	 *
 	 * @return array[]
