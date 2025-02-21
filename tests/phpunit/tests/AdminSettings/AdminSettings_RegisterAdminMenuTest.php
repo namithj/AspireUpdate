@@ -66,18 +66,19 @@ class AdminSettings_RegisterAdminMenuTest extends AdminSettings_UnitTestCase {
 			'There are no submenus.'
 		);
 
+		$base = is_multisite() ? 'settings.php' : 'options-general.php';
 		$this->assertArrayHasKey(
-			'index.php',
+			$base,
 			$submenu,
 			'There is no dashboard section.'
 		);
 
 		$this->assertIsArray(
-			$submenu['index.php'],
+			$submenu[ $base ],
 			'There are no submenus for the dashboard.'
 		);
 
-		$last_menu_item = end( $submenu['index.php'] );
+		$last_menu_item = end( $submenu[ $base ] );
 		$this->assertSame(
 			'aspireupdate-settings',
 			$last_menu_item[2],

@@ -27,14 +27,8 @@ class AdminSettings_AdminEnqueueScriptsTest extends AdminSettings_UnitTestCase {
 	 * Test that the stylesheet is enqueued on the settings screen.
 	 */
 	public function test_should_enqueue_style() {
+		$hook           = 'settings_page_aspireupdate-settings';
 		$admin_settings = new AspireUpdate\Admin_Settings();
-
-		if ( is_multisite() ) {
-			$hook = 'index_page_aspireupdate-settings';
-		} else {
-			$hook = 'dashboard_page_aspireupdate-settings';
-		}
-
 		$admin_settings->admin_enqueue_scripts( $hook );
 
 		$this->assertTrue( wp_style_is( 'aspire_update_settings_css' ) );
@@ -61,14 +55,8 @@ class AdminSettings_AdminEnqueueScriptsTest extends AdminSettings_UnitTestCase {
 	 * Test that the script is enqueued and localized on the settings screen.
 	 */
 	public function test_should_enqueue_and_localize_script() {
+		$hook           = 'settings_page_aspireupdate-settings';
 		$admin_settings = new AspireUpdate\Admin_Settings();
-
-		if ( is_multisite() ) {
-			$hook = 'index_page_aspireupdate-settings';
-		} else {
-			$hook = 'dashboard_page_aspireupdate-settings';
-		}
-
 		$admin_settings->admin_enqueue_scripts( $hook );
 
 		$this->assertTrue(
