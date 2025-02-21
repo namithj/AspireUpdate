@@ -120,29 +120,6 @@ class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 	}
 
 	/**
-	 * Test that the reset notice is output.
-	 */
-	public function test_should_output_reset_notice() {
-		update_site_option( 'aspireupdate-reset', 'true' );
-		$_GET['reset-success']       = 'success';
-		$_GET['reset-success-nonce'] = wp_create_nonce( 'aspireupdate-reset-success-nonce' );
-
-		if ( is_multisite() ) {
-			grant_super_admin( wp_get_current_user()->ID );
-		}
-
-		$admin_settings = new \AspireUpdate\Admin_Settings();
-		$actual         = get_echo( [ $admin_settings, 'admin_notices' ] );
-
-		unset( $_GET['reset-success'], $_GET['reset-success-nonce'] );
-
-		$this->assertStringContainsString(
-			'aspireupdate_settings_reset',
-			$actual
-		);
-	}
-
-	/**
 	 * Test that the 'aspireupdate-reset' option is deleted.
 	 */
 	public function test_should_delete_aspireupdatereset_option_after_output() {
@@ -186,26 +163,5 @@ class AdminSettings_AdminNoticesTest extends AdminSettings_UnitTestCase {
 		unset( $_GET['settings-updated-wpnonce'] );
 
 		$this->assertStringNotContainsString( 'aspireupdate_settings_saved', $actual );
-	}
-
-	/**
-	 * Test that the saved notice is output.
-	 */
-	public function test_should_output_saved_notice() {
-		$_GET['settings-updated-wpnonce'] = wp_create_nonce( 'aspireupdate-settings-updated-nonce' );
-
-		if ( is_multisite() ) {
-			grant_super_admin( wp_get_current_user()->ID );
-		}
-
-		$admin_settings = new \AspireUpdate\Admin_Settings();
-		$actual         = get_echo( [ $admin_settings, 'admin_notices' ] );
-
-		unset( $_GET['settings-updated-wpnonce'] );
-
-		$this->assertStringContainsString(
-			'aspireupdate_settings_saved',
-			$actual
-		);
 	}
 }
