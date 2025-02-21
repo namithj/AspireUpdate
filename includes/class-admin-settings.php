@@ -58,6 +58,7 @@ class Admin_Settings {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( is_multisite() ? 'network_admin_notices' : 'admin_notices', [ $this, 'admin_notices' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'update_option_' . $this->option_name, [ $this, 'update_option' ], 10, 2 );
 
 		add_action( 'admin_init', [ $this, 'update_settings' ] );
 		add_action( 'network_admin_edit_aspireupdate-settings', [ $this, 'update_settings' ] );
@@ -679,5 +680,24 @@ class Admin_Settings {
 		$sanitized_input['disable_ssl_verification'] = (int) ! empty( $input['disable_ssl_verification'] );
 
 		return $sanitized_input;
+	}
+
+	/**
+	 * Spring cleaning when the options are updated.
+	 *
+	 * @param array $old_value The old option value
+	 * @param array $new_value The new option value
+	 *
+	 * @return void
+	 */
+	public function update_option( $old_value, $new_value ) {
+		if (
+			isset( $old_value['enable_debug'] ) &&
+			( $old_value['enable_debug'] ) &&
+			isset( $new_value['enable_debug'] ) &&
+			( ! $new_value['enable_debug'] )
+		) {
+			Debug::clear();
+		}
 	}
 }

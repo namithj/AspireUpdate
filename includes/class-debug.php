@@ -13,13 +13,6 @@ namespace AspireUpdate;
 class Debug {
 
 	/**
-	 * Name of the debug log file.
-	 *
-	 * @var string
-	 */
-	private static $log_file = 'debug-aspire-update.log';
-
-	/**
 	 * The filesystem.
 	 *
 	 * @var Filesystem_Direct
@@ -27,12 +20,27 @@ class Debug {
 	private static $filesystem;
 
 	/**
+	 * Generates a random file name for the log file.
+	 *
+	 * @return string The Log file name.
+	 */
+	private static function generate_log_file_name() {
+		return '.debug-aspire-update-' . wp_generate_password( 12, false, false ) . '.log';
+	}
+
+	/**
 	 * Get the Log file path.
 	 *
 	 * @return string The Log file path.
 	 */
 	private static function get_file_path() {
-		return WP_CONTENT_DIR . '/' . self::$log_file;
+		$log_file = get_option( 'ap_log_file_name', false );
+		if ( false === $log_file ) {
+			$log_file = self::generate_log_file_name();
+			update_option( 'ap_log_file_name', $log_file );
+		}
+
+		return WP_CONTENT_DIR . '/' . $log_file;
 	}
 
 	/**
@@ -88,11 +96,9 @@ class Debug {
 			return new \WP_Error( 'not_accessible', __( 'Error: Unable to access the log file.', 'aspireupdate' ) );
 		}
 
-		$wp_filesystem->put_contents(
-			$file_path,
-			'',
-			FS_CHMOD_FILE
-		);
+		$wp_filesystem->delete( $file_path );
+		delete_option( 'ap_log_file_name' );
+
 		return true;
 	}
 
