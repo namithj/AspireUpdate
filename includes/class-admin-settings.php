@@ -154,7 +154,6 @@ class Admin_Settings {
 				esc_html__( 'Settings have been reset to default.', 'aspireupdate' ),
 				'success'
 			);
-			settings_errors( $this->option_name );
 			delete_site_option( 'aspireupdate-reset' );
 		}
 
@@ -171,7 +170,6 @@ class Admin_Settings {
 				esc_html__( 'Settings Saved', 'aspireupdate' ),
 				'success'
 			);
-			settings_errors( $this->option_name );
 		}
 	}
 
