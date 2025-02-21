@@ -85,7 +85,7 @@ class API_Rewrite {
 	private function add_accept_json_header( $args, $url ) {
 		$path = wp_parse_url( $url, PHP_URL_PATH );
 		// Check if the URL points to a .php file or has no extension.
-		if ( preg_match( '#/[^/]+(\.php|/)$#', $path ) ) {
+		if ( $path && preg_match( '#/[^/]+(\.php|/)$#', $path ) ) {
 			Debug::log_string( __( 'Accept JSON Header added for API calls.', 'aspireupdate' ) );
 			if ( ! isset( $args['headers'] ) ) {
 				$args['headers'] = [];
@@ -126,6 +126,18 @@ class API_Rewrite {
 			if ( false !== strpos( $url, $this->default_host ) ) {
 				Debug::log_string( __( 'Default API Found: ', 'aspireupdate' ) . $url );
 
+				if ( false === filter_var( $this->redirected_host, FILTER_VALIDATE_URL ) ) {
+					$error_message = __( 'Your API host is not a valid URL.' );
+					Debug::log_string(
+						sprintf(
+							/* translators: %s: The error message. */
+							__( 'Request Failed: %s', 'aspireupdate' ),
+							$error_message
+						)
+					);
+					return new \WP_Error( 'invalid_host', $error_message );
+				}
+
 				if ( $this->default_host !== $this->redirected_host ) {
 					if ( $this->disable_ssl ) {
 						Debug::log_string( __( 'SSL Verification Disabled', 'aspireupdate' ) );
@@ -135,8 +147,12 @@ class API_Rewrite {
 					$parsed_args = $this->add_authorization_header( $parsed_args );
 					$parsed_args = $this->add_accept_json_header( $parsed_args, $url );
 					$url         = $this->add_cache_buster( $url );
-
-					$updated_url = str_replace( $this->default_host, $this->redirected_host, $url );
+					$protocol    = wp_parse_url( $url, PHP_URL_SCHEME );
+					$updated_url = str_replace(
+						"{$protocol}://{$this->default_host}",
+						untrailingslashit( $this->redirected_host ),
+						$url
+					);
 					Debug::log_string( __( 'API Rerouted to: ', 'aspireupdate' ) . $updated_url );
 
 					Debug::log_request( $parsed_args );

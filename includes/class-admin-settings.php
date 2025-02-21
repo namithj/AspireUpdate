@@ -74,7 +74,7 @@ class Admin_Settings {
 	 */
 	private function get_default_settings() {
 		$options             = [];
-		$options['api_host'] = 'api.aspirecloud.net';
+		$options['api_host'] = 'https://api.aspirecloud.net';
 		return $options;
 	}
 
@@ -440,27 +440,27 @@ class Admin_Settings {
 				'id'          => 'api_host',
 				'type'        => 'hosts',
 				'data'        => $options,
-				'description' => esc_html__( 'Your new API Host.', 'aspireupdate' ),
+				'description' => esc_html__( 'Your new API Host. Ensure that it starts with http:// or https://', 'aspireupdate' ),
 				'options'     => [
 					[
-						'value'           => 'api.aspirecloud.net',
+						'value'           => 'https://api.aspirecloud.net',
 						'label'           => sprintf(
 							/* translators: 1: The name of the API Service */
 							__( 'AspireCloud (%1$s)', 'aspireupdate' ),
-							'api.aspirecloud.net'
+							'https://api.aspirecloud.net'
 						),
 						'require-api-key' => 'false',
-						'api-key-url'     => 'api.aspirecloud.net/v1/apitoken',
+						'api-key-url'     => 'https://api.aspirecloud.net/v1/apitoken',
 					],
 					[
-						'value'           => 'api.aspirecloud.io',
+						'value'           => 'https://api.aspirecloud.io',
 						'label'           => sprintf(
 							/* translators: 1: The name of the API Service */
 							__( 'AspireCloud Bleeding Edge (%1$s)', 'aspireupdate' ),
-							'api.aspirecloud.io'
+							'https://api.aspirecloud.io'
 						),
 						'require-api-key' => 'false',
-						'api-key-url'     => 'api.aspirecloud.net/v1/apitoken',
+						'api-key-url'     => 'https://api.aspirecloud.net/v1/apitoken',
 					],
 					[
 						'value'           => 'other',
@@ -630,7 +630,8 @@ class Admin_Settings {
 				</select>
 				<p>
 					<input
-						type="text"
+						type="url"
+						pattern="(https?)://.*"
 						id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>_other"
 						name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>_other]"
 						value="<?php echo esc_attr( $options[ $id . '_other' ] ?? '' ); ?>"

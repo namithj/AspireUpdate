@@ -28,7 +28,7 @@ test.describe('[Admin Settings] [Field] API Host', () => {
 	test('is AspireCloud by default', async ({ page }) => {
 		await page.check(fieldSelector + enable);
 		await expect(page.locator(fieldSelector + api_host)).toBeVisible();
-		await expect(page.locator(fieldSelector + api_host)).toHaveValue('api.aspirecloud.net');
+		await expect(page.locator(fieldSelector + api_host)).toHaveValue('https://api.aspirecloud.net');
 	});
 
 	test('has a bleeding edge option', async ({ page }) => {
@@ -36,7 +36,7 @@ test.describe('[Admin Settings] [Field] API Host', () => {
 		await expect(page.locator(fieldSelector + api_host)).toBeVisible();
 
 		const options = await page.locator(fieldSelector + api_host + ' option').all();
-		await expect(await options[1].getAttribute('value')).toBe('api.aspirecloud.io');
+		await expect(await options[1].getAttribute('value')).toBe('https://api.aspirecloud.io');
 	});
 
 	test('has an Other option', async ({ page }) => {

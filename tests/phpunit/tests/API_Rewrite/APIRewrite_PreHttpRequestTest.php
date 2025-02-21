@@ -55,11 +55,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', false, '' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', false, '' );
 		$api_rewrite->pre_http_request(
 			[],
 			[ 'sslverify' => 'original_sslverify_value' ],
-			$this->get_default_host()
+			'https://' . $this->get_default_host()
 		);
 
 		$this->assertSame( 'original_sslverify_value', $actual );
@@ -81,11 +81,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
 		$api_rewrite->pre_http_request(
 			[],
 			[ 'sslverify' => true ],
-			$this->get_default_host()
+			'https://' . $this->get_default_host()
 		);
 
 		$this->assertFalse( $actual );
@@ -109,8 +109,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			3
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
-		$api_rewrite->pre_http_request( [], [], $this->get_default_host() );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
+		$api_rewrite->pre_http_request( [], [], 'https://' . $this->get_default_host() );
 
 		$this->assertMatchesRegularExpression( '/my\.api\.org\?cache_buster=[0-9]+/', $actual );
 	}
@@ -134,8 +134,8 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 		);
 
 		$api_key     = 'MY_API_KEY';
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, $api_key );
-		$api_rewrite->pre_http_request( [], [], $this->get_default_host() );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, $api_key );
+		$api_rewrite->pre_http_request( [], [], 'https://' . $this->get_default_host() );
 
 		$this->assertIsArray(
 			$actual,
@@ -193,11 +193,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, 'MY_API_KEY' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, 'MY_API_KEY' );
 		$api_rewrite->pre_http_request(
 			[],
 			[],
-			untrailingslashit( $this->get_default_host() ) . $path
+			untrailingslashit( 'https://' . $this->get_default_host() ) . $path
 		);
 
 		$this->assertIsArray(
@@ -279,11 +279,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, 'MY_API_KEY' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, 'MY_API_KEY' );
 		$api_rewrite->pre_http_request(
 			[],
 			[],
-			$this->get_default_host() . $path
+			'https://' . $this->get_default_host() . $path
 		);
 
 		$this->assertIsArray(
@@ -366,11 +366,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 		);
 
 		// No API key ensures no Authorization header will be already set.
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
 		$api_rewrite->pre_http_request(
 			[],
 			[],
-			$this->get_default_host() . '/file.php'
+			'https://' . $this->get_default_host() . '/file.php'
 		);
 
 		$this->assertIsArray(
@@ -412,7 +412,7 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
 		$actual      = $api_rewrite->pre_http_request(
 			[],
 			[],
@@ -464,11 +464,11 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 			2
 		);
 
-		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
 		$actual      = $api_rewrite->pre_http_request(
 			[],
 			[],
-			$this->get_default_host() . '/file.php'
+			'https://' . $this->get_default_host() . '/file.php'
 		);
 
 		$this->assertInstanceOf(
@@ -500,6 +500,30 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 		}
 
 		return $datasets;
+	}
+
+	/**
+	 * Test that a WP_Error object is returned for a redirected_host that's an invalid URL.
+	 */
+	public function test_should_return_wp_error_for_redirected_host_that_is_an_invalid_url() {
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'my.api.org', true, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[],
+			'https://' . $this->get_default_host() . '/file.php'
+		);
+
+		$this->assertInstanceOf(
+			'WP_Error',
+			$actual,
+			'A WP_Error object was not returned.'
+		);
+
+		$this->assertSame(
+			'invalid_host',
+			$actual->get_error_code(),
+			'The wrong error code was returned.'
+		);
 	}
 
 	/**
