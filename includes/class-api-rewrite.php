@@ -166,8 +166,12 @@ class API_Rewrite {
 
 					Debug::log_response( $response );
 
-					$response_code = wp_remote_retrieve_response_code( $response );
-					if ( 200 !== $response_code && 404 !== $response_code ) {
+					$response_code         = wp_remote_retrieve_response_code( $response );
+					$codes_to_pass_through = [
+						200,
+						404,
+					];
+					if ( ! in_array( $response_code, $codes_to_pass_through, true ) ) {
 						$message = wp_remote_retrieve_response_message( $response );
 						Debug::log_string(
 							sprintf(
