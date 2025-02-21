@@ -356,7 +356,7 @@ class Admin_Settings {
 			'aspire_update_settings_js',
 			'aspireupdate',
 			[
-				'ajax_url'         => network_admin_url( 'admin-ajax.php' ),
+				'ajax_url'         => admin_url( 'admin-ajax.php' ),
 				'nonce'            => wp_create_nonce( 'aspireupdate-ajax' ),
 				'domain'           => Utilities::get_site_domain(),
 				'line_ending'      => PHP_EOL,
