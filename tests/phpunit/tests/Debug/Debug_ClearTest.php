@@ -56,9 +56,9 @@ class Debug_ClearTest extends Debug_UnitTestCase {
 	}
 
 	/**
-	 * Test that the log file is cleared.
+	 * Test that the log file is deleted.
 	 */
-	public function test_should_clear_log_file() {
+	public function test_should_delete_log_file() {
 		file_put_contents(
 			self::$log_file,
 			"First line\r\nSecond line\r\nThird line"
@@ -71,15 +71,9 @@ class Debug_ClearTest extends Debug_UnitTestCase {
 
 		AspireUpdate\Debug::clear();
 
-		$this->assertFileExists(
+		$this->assertFileDoesNotExist(
 			self::$log_file,
-			'The log file was deleted.'
-		);
-
-		$this->assertSame(
-			'',
-			file_get_contents( self::$log_file ),
-			'The log file was not cleared.'
+			'The log file was not deleted.'
 		);
 	}
 }
