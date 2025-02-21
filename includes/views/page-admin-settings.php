@@ -1,12 +1,13 @@
 <?php
 namespace AspireUpdate;
 
+$options_base = $args['options_base'] ?? '';
 $reset_url    = $args['reset_url'] ?? '';
 $option_group = $args['option_group'] ?? '';
 ?>
 <div class="wrap">
 	<h1><?php esc_html_e( 'AspireUpdate Settings', 'aspireupdate' ); ?></h1>
-	<form id="aspireupdate-settings-form" method="post" action="index.php?page=aspireupdate-settings">
+	<form id="aspireupdate-settings-form" method="post" action="<?php echo esc_url( network_admin_url( $options_base ) ); ?>?page=aspireupdate-settings">
 		<?php
 		settings_fields( $option_group );
 		do_settings_sections( 'aspireupdate-settings' );

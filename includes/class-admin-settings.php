@@ -380,6 +380,7 @@ class Admin_Settings {
 		Utilities::include_file(
 			'page-admin-settings.php',
 			[
+				'options_base' => $this->options_base,
 				'reset_url'    => $reset_url,
 				'option_group' => $this->option_group,
 			]
