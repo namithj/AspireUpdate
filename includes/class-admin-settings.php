@@ -692,10 +692,8 @@ class Admin_Settings {
 	 */
 	public function update_option( $old_value, $new_value ) {
 		if (
-			isset( $old_value['enable_debug'] ) &&
-			( $old_value['enable_debug'] ) &&
-			isset( $new_value['enable_debug'] ) &&
-			( ! $new_value['enable_debug'] )
+			isset( $old_value['enable_debug'] ) && $old_value['enable_debug'] &&
+			isset( $new_value['enable_debug'] ) && ! $new_value['enable_debug']
 		) {
 			Debug::clear();
 		}
