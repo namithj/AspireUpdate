@@ -111,7 +111,7 @@ class Admin_Settings {
 						'reset-success-nonce' => wp_create_nonce( 'aspireupdate-reset-success-nonce' ),
 
 					],
-					network_admin_url( 'index.php?page=aspireupdate-settings' )
+					network_admin_url( $this->options_base . '?page=aspireupdate-settings' )
 				)
 			);
 			! defined( 'AP_RUN_TESTS' ) && exit;
@@ -296,7 +296,7 @@ class Admin_Settings {
 					[
 						'settings-updated-wpnonce' => wp_create_nonce( 'aspireupdate-settings-updated-nonce' ),
 					],
-					network_admin_url( 'index.php?page=aspireupdate-settings' )
+					network_admin_url( $this->options_base . '?page=aspireupdate-settings' )
 				)
 			);
 			! defined( 'AP_RUN_TESTS' ) && exit;
@@ -310,7 +310,7 @@ class Admin_Settings {
 	 * @return array The modified action links.
 	 */
 	public function plugin_action_links( $links ) {
-		$settings_url = network_admin_url( 'index.php?page=aspireupdate-settings' );
+		$settings_url = network_admin_url( $this->options_base . '?page=aspireupdate-settings' );
 		return array_merge(
 			[
 				'settings' => '<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'aspireupdate' ) . '</a>',
@@ -330,7 +330,7 @@ class Admin_Settings {
 		}
 		if ( false === AP_REMOVE_UI ) {
 			add_submenu_page(
-				'index.php',
+				$this->options_base,
 				'AspireUpdate',
 				'AspireUpdate',
 				is_multisite() ? 'manage_network_options' : 'manage_options',
@@ -379,7 +379,7 @@ class Admin_Settings {
 				'reset-nonce' => wp_create_nonce( 'aspireupdate-reset-nonce' ),
 
 			],
-			network_admin_url( 'index.php?page=aspireupdate-settings' )
+			network_admin_url( $this->options_base . '?page=aspireupdate-settings' )
 		);
 		Utilities::include_file(
 			'page-admin-settings.php',
