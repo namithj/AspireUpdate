@@ -561,37 +561,38 @@ class Admin_Settings {
 	 */
 	public function add_settings_field_callback( $args = [] ) {
 
-		$defaults      = [
+		$defaults       = [
 			'id'          => '',
 			'type'        => 'text',
 			'description' => '',
 			'data'        => [],
 			'options'     => [],
 		];
-		$args          = wp_parse_args( $args, $defaults );
-		$id            = $args['id'];
-		$type          = $args['type'];
-		$description   = $args['description'];
-		$group_options = $args['options'];
-		$options       = $args['data'];
+		$args           = wp_parse_args( $args, $defaults );
+		$id             = $args['id'];
+		$type           = $args['type'];
+		$description    = $args['description'];
+		$group_options  = $args['options'];
+		$options        = $args['data'];
+		$description_id = "{$id}-description";
 
 		echo '<div class="aspireupdate-settings-field-wrapper aspireupdate-settings-field-wrapper-' . esc_attr( $id ) . '">';
 		switch ( $type ) {
 			case 'text':
 				?>
-					<input type="text" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="<?php echo esc_attr( $options[ $id ] ?? '' ); ?>" class="regular-text" />
+					<input type="text" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="<?php echo esc_attr( $options[ $id ] ?? '' ); ?>" class="regular-text" aria-describedby="<?php echo esc_attr( $description_id ); ?>" />
 					<?php
 				break;
 
 			case 'textarea':
 				?>
-					<textarea id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" rows="5" cols="50"><?php echo esc_textarea( $options[ $id ] ?? '' ); ?></textarea>
+					<textarea id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" rows="5" cols="50" aria-describedby="<?php echo esc_attr( $description_id ); ?>"><?php echo esc_textarea( $options[ $id ] ?? '' ); ?></textarea>
 					<?php
 				break;
 
 			case 'checkbox':
 				?>
-					<input type="checkbox" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="1" <?php checked( 1, $options[ $id ] ?? 0 ); ?> />
+					<input type="checkbox" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="1" <?php checked( 1, $options[ $id ] ?? 0 ); ?> aria-describedby="<?php echo esc_attr( $description_id ); ?>" />
 					<?php
 				break;
 
@@ -609,7 +610,7 @@ class Admin_Settings {
 
 			case 'api-key':
 				?>
-					<input type="text" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="<?php echo esc_attr( $options[ $id ] ?? '' ); ?>" class="regular-text" />
+					<input type="text" id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" value="<?php echo esc_attr( $options[ $id ] ?? '' ); ?>" class="regular-text" aria-describedby="<?php echo esc_attr( $description_id ); ?>" />
 					<input type="button" id="aspireupdate-generate-api-key" value="Generate API Key" title="<?php esc_attr_e( 'Generate API Key', 'aspireupdate' ); ?>" />
 					<p class="error"></p>
 					<?php
@@ -617,7 +618,7 @@ class Admin_Settings {
 
 			case 'hosts':
 				?>
-				<select id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" class="regular-text">
+				<select id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>]" class="regular-text" aria-describedby="<?php echo esc_attr( $description_id ); ?>">
 					<?php
 					foreach ( $group_options as $group_option ) {
 						?>
@@ -646,7 +647,7 @@ class Admin_Settings {
 				<?php
 				break;
 		}
-		echo '<p class="description">' . esc_html( $description ) . '</p>';
+		echo '<p class="description" id="' . esc_attr( $description_id ) . '">' . esc_html( $description ) . '</p>';
 		echo '</div>';
 	}
 
