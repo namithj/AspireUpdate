@@ -3,7 +3,7 @@ import { fieldSelector, enable_debug, debug_string } from '../data/fields';
 import { settings } from '../data/routes';
 
 test.describe('[Admin Settings] [Field] Debug Type: String', () => {
-	test.beforeEach(async ( { page }) => {
+	test.beforeEach(async ({ page }) => {
 		const baseURL = test.info().project.use.baseURL;
 		const settingsPage = `${baseURL}/wp-admin/${settings}`;
 		await page.goto(settingsPage);
