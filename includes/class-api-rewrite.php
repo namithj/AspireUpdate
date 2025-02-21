@@ -54,7 +54,10 @@ class API_Rewrite {
 		}
 		$this->disable_ssl = $disable_ssl;
 		$this->api_key     = $api_key;
-		add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
+
+		if ( Admin_Settings::get_instance()->get_setting( 'enable', false ) ) {
+			add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
+		}
 	}
 
 	/**
