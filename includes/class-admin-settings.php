@@ -41,9 +41,17 @@ class Admin_Settings {
 	private $options = null;
 
 	/**
+	 * The base page for the options.
+	 *
+	 * @var string
+	 */
+	private $options_base;
+
+	/**
 	 * The Constructor.
 	 */
 	public function __construct() {
+		$this->options_base = is_multisite() ? 'settings.php' : 'options-general.php';
 		add_action( is_multisite() ? 'network_admin_menu' : 'admin_menu', [ $this, 'register_admin_menu' ] );
 		add_filter( 'plugin_action_links_aspireupdate/aspire-update.php', [ $this, 'plugin_action_links' ] );
 		add_action( 'admin_init', [ $this, 'reset_settings' ] );
