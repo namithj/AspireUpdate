@@ -127,7 +127,7 @@ class API_Rewrite {
 				Debug::log_string( __( 'Default API Found: ', 'aspireupdate' ) . $url );
 
 				if ( false === filter_var( $this->redirected_host, FILTER_VALIDATE_URL ) ) {
-					$error_message = __( 'Your API host is not a valid URL.' );
+					$error_message = __( 'Your API host is not a valid URL.', 'aspireupdate' );
 					Debug::log_string(
 						sprintf(
 							/* translators: %s: The error message. */
