@@ -424,9 +424,10 @@ class Admin_Settings {
 			'aspireupdate-settings',
 			'aspireupdate_settings_section',
 			[
-				'id'   => 'enable',
-				'type' => 'checkbox',
-				'data' => $options,
+				'id'        => 'enable',
+				'type'      => 'checkbox',
+				'data'      => $options,
+				'label_for' => 'aspireupdate-settings-field-enable',
 			]
 		);
 
@@ -441,6 +442,7 @@ class Admin_Settings {
 				'type'        => 'hosts',
 				'data'        => $options,
 				'description' => esc_html__( 'Your new API Host. Ensure that it starts with http:// or https://', 'aspireupdate' ),
+				'label_for'   => 'aspireupdate-settings-field-api_host',
 				'options'     => [
 					[
 						'value'           => 'https://api.aspirecloud.net',
@@ -482,6 +484,7 @@ class Admin_Settings {
 				'type'        => 'api-key',
 				'data'        => $options,
 				'description' => esc_html__( 'Provides an API key for repositories that may require authentication.', 'aspireupdate' ),
+				'label_for'   => 'aspireupdate-settings-field-api_key',
 			]
 		);
 
@@ -507,6 +510,7 @@ class Admin_Settings {
 				'type'        => 'checkbox',
 				'data'        => $options,
 				'description' => esc_html__( 'Enables debug mode for the plugin.', 'aspireupdate' ),
+				'label_for'   => 'aspireupdate-settings-field-enable_debug',
 			]
 		);
 
@@ -541,6 +545,7 @@ class Admin_Settings {
 				'data'        => $options,
 				'class'       => 'advanced-setting',
 				'description' => esc_html__( 'Disables the verification of SSL to allow local testing.', 'aspireupdate' ),
+				'label_for'   => 'aspireupdate-settings-field-disable_ssl_verification',
 			]
 		);
 	}
