@@ -355,11 +355,12 @@ class Admin_Settings {
 			'aspire_update_settings_js',
 			'aspireupdate',
 			[
-				'ajax_url'         => admin_url( 'admin-ajax.php' ),
-				'nonce'            => wp_create_nonce( 'aspireupdate-ajax' ),
-				'domain'           => Utilities::get_site_domain(),
-				'line_ending'      => PHP_EOL,
-				'unexpected_error' => esc_html__( 'Unexpected Error', 'aspireupdate' ),
+				'ajax_url'             => admin_url( 'admin-ajax.php' ),
+				'nonce'                => wp_create_nonce( 'aspireupdate-ajax' ),
+				'domain'               => Utilities::get_site_domain(),
+				'line_ending'          => PHP_EOL,
+				'unexpected_error'     => esc_html__( 'Unexpected Error', 'aspireupdate' ),
+				'api_host_other_error' => esc_html__( 'Please enter a valid URL', 'aspireupdate' ),
 			]
 		);
 	}
@@ -643,7 +644,7 @@ class Admin_Settings {
 				<p>
 					<input
 						type="url"
-						pattern="(https?)://.*"
+						data-pattern="(https?)://.*"
 						id="aspireupdate-settings-field-<?php echo esc_attr( $id ); ?>_other"
 						name="<?php echo esc_attr( $this->option_name ); ?>[<?php echo esc_attr( $id ); ?>_other]"
 						value="<?php echo esc_attr( $options[ $id . '_other' ] ?? '' ); ?>"

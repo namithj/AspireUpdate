@@ -212,10 +212,10 @@ class ApiRewrites {
 		field: jQuery('#aspireupdate-settings-field-api_host_other'),
 		init() {
 			ApiRewrites.other_hosts.field.on("blur", function (field) {
+				let parent = ApiRewrites.other_hosts.field.parent();
 				let value = ApiRewrites.other_hosts.field.val();
-
-				if (! URL.parse(value)) {
-					field.currentTarget.setCustomValidity('');
+				if (parent.is(":visible") && !URL.parse(value)) {
+					field.currentTarget.setCustomValidity(aspireupdate.api_host_other_error);
 				}
 			});
 		},
@@ -225,14 +225,21 @@ class ApiRewrites {
 			ApiRewrites.other_hosts.make_required();
 		},
 		hide() {
+			ApiRewrites.other_hosts.field.get(0).setCustomValidity("");
 			ApiRewrites.other_hosts.field.parent().hide();
 			ApiRewrites.other_hosts.remove_required();
 		},
 		make_required() {
+			let pattern = ApiRewrites.other_hosts.field.attr('data-pattern');
+			ApiRewrites.other_hosts.field.attr('pattern', pattern);
+			ApiRewrites.other_hosts.field.attr('type', 'url');
 			ApiRewrites.other_hosts.field.prop('required', true);
 		},
 		remove_required() {
+			ApiRewrites.other_hosts.field.removeAttr('pattern');
+			ApiRewrites.other_hosts.field.attr('type', 'text');
 			ApiRewrites.other_hosts.field.prop('required', false);
+			ApiRewrites.other_hosts.field.removeAttr('required');
 		}
 	}
 
