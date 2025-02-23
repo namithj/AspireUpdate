@@ -48,6 +48,7 @@ function aspire_update() {
 	if ( ! defined( 'AP_RUN_TESTS' ) ) {
 		new AspireUpdate\Controller();
 	}
+	( new AspireUpdate\GUL_Loader() )->init()->run();
 }
 
 register_activation_hook( __FILE__, 'aspire_update_activation_hook' );
