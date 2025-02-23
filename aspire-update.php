@@ -22,6 +22,7 @@
  * Domain Path:       /languages
  * GitHub Plugin URI: https://github.com/aspirepress/aspireupdate
  * Primary Branch:    main
+ * Update URI:        https://thefragens.net
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
