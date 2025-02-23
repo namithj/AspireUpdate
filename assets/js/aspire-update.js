@@ -211,11 +211,14 @@ class ApiRewrites {
 	static other_hosts = {
 		field: jQuery('#aspireupdate-settings-field-api_host_other'),
 		init() {
-			ApiRewrites.other_hosts.field.on("blur", function (field) {
+			ApiRewrites.other_hosts.field.on("blur", function (event) {
 				let parent = ApiRewrites.other_hosts.field.parent();
 				let value = ApiRewrites.other_hosts.field.val();
-				if (parent.is(":visible") && !URL.parse(value)) {
-					field.currentTarget.setCustomValidity(aspireupdate.api_host_other_error);
+				let current_field = ApiRewrites.other_hosts.field.get(0);
+				console.log(current_field.checkValidity());
+				current_field.setCustomValidity("");
+				if (parent.is(":visible") && !current_field.checkValidity()) {
+					current_field.setCustomValidity(aspireupdate.api_host_other_error);
 				}
 			});
 		},
