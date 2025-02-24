@@ -220,12 +220,14 @@ class ApiRewrites {
 				if (parent.is(":visible") && !current_field.checkValidity()) {
 					current_field.setCustomValidity(aspireupdate.api_host_other_error);
 				}
+				current_field.reportValidity();
 			});
 		},
 		show() {
 			ApiRewrites.other_hosts.field.parent().show();
 			ApiRewrites.other_hosts.field.focus();
 			ApiRewrites.other_hosts.make_required();
+			ApiRewrites.other_hosts.field.get(0).reportValidity();
 		},
 		hide() {
 			ApiRewrites.other_hosts.field.get(0).setCustomValidity("");
