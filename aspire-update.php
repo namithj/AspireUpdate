@@ -48,7 +48,8 @@ function aspire_update() {
 	if ( ! defined( 'AP_RUN_TESTS' ) ) {
 		new AspireUpdate\Controller();
 	}
-	( new AspireUpdate\GUL_Loader() )->init()->run();
+	require_once __DIR__ . '/vendor/afragen/git-updater-lite/Lite.php';
+	( new \Fragen\Git_Updater\Lite( __FILE__ ) )->run();
 }
 
 register_activation_hook( __FILE__, 'aspire_update_activation_hook' );
