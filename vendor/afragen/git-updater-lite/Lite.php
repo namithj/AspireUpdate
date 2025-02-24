@@ -168,9 +168,11 @@ if ( ! class_exists( 'Fragen\\Git_Updater\\Lite' ) ) {
 		 * @param \Plugin_Upgrader|\Theme_Upgrader $upgrader      An Upgrader object.
 		 * @param array                            $hook_extra    Array of hook data.
 		 *
+		 * @throws \TypeError If the type of $upgrader is not correct.
+		 *
 		 * @return string|\WP_Error
 		 */
-		public function upgrader_source_selection( string $source, string $remote_source, \Plugin_Upgrader|\Theme_Upgrader $upgrader, $hook_extra = null ) {
+		public function upgrader_source_selection( string $source, string $remote_source, $upgrader, $hook_extra = null ) {
 			global $wp_filesystem;
 
 			$new_source = $source;
@@ -178,6 +180,11 @@ if ( ! class_exists( 'Fragen\\Git_Updater\\Lite' ) ) {
 			// Exit if installing.
 			if ( isset( $hook_extra['action'] ) && 'install' === $hook_extra['action'] ) {
 				return $source;
+			}
+
+			// TODO: add type hint for $upgrader, PHP 8 minimum due to `|`.
+			if ( ! $upgrader instanceof \Plugin_Upgrader && ! $upgrader instanceof \Theme_Upgrader ) {
+				throw new \TypeError( __METHOD__ . '(): Argument #3 ($upgrader) must be of type Plugin_Upgrader|Theme_Upgrader, ' . esc_attr( gettype( $upgrader ) ) . ' given.' );
 			}
 
 			// Rename plugins.
