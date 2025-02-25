@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f401eb18c8a184d86bc2db09420c8b78",
+    "content-hash": "7448633c3996d4a87ee3d1dc583ecf00",
     "packages": [
         {
             "name": "afragen/autoloader",
@@ -46,6 +46,65 @@
                 "source": "https://github.com/afragen/autoloader/tree/3.0.1"
             },
             "time": "2025-02-19T18:41:01+00:00"
+        },
+        {
+            "name": "afragen/git-updater-lite",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/afragen/git-updater-lite.git",
+                "reference": "06869d5a9abd97551415e5007fd1a694f799d02a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/afragen/git-updater-lite/zipball/06869d5a9abd97551415e5007fd1a694f799d02a",
+                "reference": "06869d5a9abd97551415e5007fd1a694f799d02a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "3.10.3",
+                "wp-coding-standards/wpcs": "~3.1.0",
+                "yoast/phpunit-polyfills": "^1.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Lite.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andy Fragen",
+                    "email": "andy@thefragens.com",
+                    "homepage": "https://github.com/afragen/git-updater-lite",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple class to integrate with Git Updater for standalone plugin/theme updates.",
+            "keywords": [
+                "plugin",
+                "theme",
+                "updater",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/afragen/git-updater-lite/issues",
+                "source": "https://github.com/afragen/git-updater-lite/tree/2.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/afragen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-24T21:37:23+00:00"
         },
         {
             "name": "afragen/translations-updater",

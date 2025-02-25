@@ -20,8 +20,7 @@
  * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  * Text Domain:       aspireupdate
  * Domain Path:       /languages
- * GitHub Plugin URI: https://github.com/aspirepress/aspireupdate
- * Primary Branch:    main
+ * Update URI:        https://aspirepress.org
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,6 +46,8 @@ function aspire_update() {
 	if ( ! defined( 'AP_RUN_TESTS' ) ) {
 		new AspireUpdate\Controller();
 	}
+	require_once __DIR__ . '/vendor/afragen/git-updater-lite/Lite.php';
+	( new \Fragen\Git_Updater\Lite( __FILE__ ) )->run();
 }
 
 register_activation_hook( __FILE__, 'aspire_update_activation_hook' );
