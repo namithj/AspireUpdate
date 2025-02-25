@@ -20,7 +20,7 @@
  * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  * Text Domain:       aspireupdate
  * Domain Path:       /languages
- * Update URI:        https://thefragens.net
+ * Update URI:        https://aspirepress.org
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
