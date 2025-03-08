@@ -22,6 +22,7 @@ class Controller {
 		$this->api_rewrite();
 		add_action( 'wp_ajax_aspireupdate_clear_log', [ $this, 'clear_log' ] );
 		add_action( 'wp_ajax_aspireupdate_read_log', [ $this, 'read_log' ] );
+		add_filter( 'site_transient_update_plugins', [ $this, 'check_self_update_notifications' ] );
 	}
 
 	/**
@@ -124,5 +125,20 @@ class Controller {
 				'content' => $content,
 			]
 		);
+	}
+
+	/**
+	 * Hide Aspire Update plugin from plugin update notifications.
+	 * This is to prevent supply chain attacks via unverified API providers.
+	 *
+	 * @param object $value The Update Notifications Data.
+	 *
+	 * @return object $value The Update Notifications Data.
+	 */
+	public function check_self_update_notifications( $value ) {
+		if ( isset( $value->response['aspireupdate/aspire-update.php'] ) ) {
+			unset( $value->response['aspireupdate/aspire-update.php'] );
+		}
+		return $value;
 	}
 }

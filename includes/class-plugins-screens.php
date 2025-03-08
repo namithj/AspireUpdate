@@ -35,6 +35,7 @@ class Plugins_Screens {
 		$admin_settings = Admin_Settings::get_instance();
 		if ( $admin_settings->get_setting( 'enable', false ) ) {
 			add_filter( 'install_plugins_tabs', [ $this, 'remove_unused_filter_tabs' ] );
+			add_filter( 'plugins_api_result', [ $this, 'hide_self_plugins_api_result' ], 10, 1 );
 		}
 	}
 
@@ -61,5 +62,38 @@ class Plugins_Screens {
 			unset( $tabs[ $filter ] );
 		}
 		return $tabs;
+	}
+
+	/**
+	 * Hide Aspire Update plugin from plugin search results.
+	 * This is to prevent supply chain attacks via unverified API providers.
+	 *
+	 * @param array $results The Results of the Plugins API call.
+	 *
+	 * @return array $results The updated Results of the Plugins API call.
+	 */
+	public function hide_self_plugins_api_result( $results ) {
+		if (
+			! is_admin() ||
+			! isset( $_REQUEST['s'] )
+		) {
+			return $results;
+		}
+
+		if (
+			! is_object( $results ) ||
+			! isset( $results->plugins ) ||
+			! is_array( $results->plugins )
+		) {
+			return $results;
+		}
+
+		foreach ( $results->plugins as $key => $plugin ) {
+			if ( isset( $plugin['slug'] ) && ( 'aspireupdate' === $plugin['slug'] ) ) {
+				unset( $results->plugins[ $key ] );
+				break;
+			}
+		}
+		return $results;
 	}
 }
