@@ -280,6 +280,37 @@ class API_Rewrite {
 						return new \WP_Error( 'failed_request', $message );
 					}
 
+					if ( $is_plugin_or_theme ) {
+						// Remove non-API assets from update responses.
+						if ( 'update' === $request_type && ! empty( $non_api_assets ) ) {
+							$body = json_decode( $response['body'], true );
+
+							if ( ! empty( $body[ $asset_type ] ) ) {
+								$asset_paths = array_keys( $body[ $asset_type ] );
+
+								$removed = false;
+								foreach ( $asset_paths as $asset_path ) {
+									if ( array_key_exists( $asset_path, $non_api_assets ) ) {
+										unset( $body[ $asset_type ][ $asset_path ] );
+										$removed = true;
+									}
+								}
+
+								$response['body'] = wp_json_encode( $body );
+
+								if ( $removed ) {
+									Debug::log_string(
+										sprintf(
+											/* translators: %s: The asset type. */
+											__( 'Removed non-API %s from the update response.', 'aspireupdate' ),
+											'plugins' === $asset_type ? __( 'plugins', 'aspireupdate' ) : __( 'themes', 'aspireupdate' )
+										)
+									);
+								}
+							}
+						}
+					}
+
 					return $response;
 
 				}
