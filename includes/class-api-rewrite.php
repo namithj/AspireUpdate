@@ -309,6 +309,34 @@ class API_Rewrite {
 								}
 							}
 						}
+
+						// Remove AspireUpdate from information responses.
+						if ( 'info' === $request_type && 'plugins' === $asset_type && false === stripos( $updated_url, 'slug' ) ) {
+							$body = json_decode( $response['body'], true );
+
+							if ( ! empty( $body[ $asset_type ] ) ) {
+								foreach ( $body[ $asset_type ] as $asset_key => $asset_data ) {
+									if ( isset( $asset_data['slug'] ) && 'aspireupdate' === strtolower( $asset_data['slug'] ) ) {
+										unset( $body[ $asset_type ][ $asset_key ] );
+
+										Debug::log_string(
+											sprintf(
+												/* translators: %s: AspireUpdate. */
+												__( 'Removed %s from the response.', 'aspireupdate' ),
+												'AspireUpdate'
+											)
+										);
+
+										/*
+										 * Do not `break` in case more than one entry with
+										 * the slug has been injected into the response.
+										 */
+									}
+								}
+
+								$response['body'] = wp_json_encode( $body );
+							}
+						}
 					}
 
 					return $response;
