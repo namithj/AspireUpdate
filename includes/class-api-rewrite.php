@@ -111,6 +111,70 @@ class API_Rewrite {
 	}
 
 	/**
+	 * Get non-API assets.
+	 *
+	 * @param string $asset_type The type of asset.
+	 *
+	 * @return array An associative array of non-API asset paths and data.
+	 */
+	private function get_non_api_assets( $asset_type ) {
+		switch ( $asset_type ) {
+			case 'plugins':
+				return array_filter(
+					get_plugins(),
+					static function ( $asset ) {
+						return ! empty( $asset['UpdateURI'] );
+					}
+				);
+			case 'themes':
+				return array_filter(
+					wp_get_themes(),
+					static function ( $asset ) {
+						return ! empty( $asset->get( 'UpdateURI' ) );
+					}
+				);
+			default:
+				return [];
+		}
+	}
+
+	/**
+	 * Get the request type.
+	 *
+	 * @param string $url The URL.
+	 *
+	 * @return string The request type.
+	 */
+	private function get_request_type( $url ) {
+		if ( false !== stripos( $url, '/update-check/' ) ) {
+			return 'update';
+		}
+
+		if ( false !== stripos( $url, '/info/' ) ) {
+			return 'info';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get the asset type.
+	 *
+	 * @param string $url The URL.
+	 *
+	 * @return string The asset type.
+	 */
+	private function get_asset_type( $url ) {
+		if ( false !== stripos( $url, '/plugins/' ) ) {
+			return 'plugins';
+		} elseif ( false !== stripos( $url, '/themes/' ) ) {
+			return 'themes';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Rewrite the API End points.
 	 *
 	 * @param mixed  $response The response for the request.
@@ -159,6 +223,36 @@ class API_Rewrite {
 					Debug::log_string( __( 'API Rerouted to: ', 'aspireupdate' ) . $updated_url );
 
 					Debug::log_request( $parsed_args );
+
+					$request_type       = $this->get_request_type( $updated_url );
+					$asset_type         = $this->get_asset_type( $updated_url );
+					$is_plugin_or_theme = $asset_type && in_array( $asset_type, [ 'plugins', 'themes' ], true );
+					$non_api_assets     = [];
+
+					// Remove non-API assets from update requests.
+					if ( 'update' === $request_type && $is_plugin_or_theme ) {
+						// This is also used later to remove non-API assets from update responses.
+						$non_api_assets = $this->get_non_api_assets( $asset_type );
+
+						if ( ! empty( $parsed_args['body'][ $asset_type ] ) ) {
+							$assets     = json_decode( $parsed_args['body'][ $asset_type ], true );
+							$api_assets = array_diff_key( $assets[ $asset_type ], $non_api_assets );
+
+							if ( $assets[ $asset_type ] !== $api_assets ) {
+								$assets[ $asset_type ] = $api_assets;
+
+								Debug::log_string(
+									sprintf(
+										/* translators: %s: The asset type. */
+										__( 'Removed non-API %s from the update request.', 'aspireupdate' ),
+										'plugins' === $asset_type ? __( 'plugins', 'aspireupdate' ) : __( 'themes', 'aspireupdate' )
+									)
+								);
+							}
+
+							$parsed_args['body'][ $asset_type ] = wp_json_encode( $assets );
+						}
+					}
 
 					/**
 					 * Temporarily Unhook Filter to prevent recursion.
