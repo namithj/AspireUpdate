@@ -427,6 +427,102 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Data provider.
+	 *
+	 * @return array[]
+	 */
+	public function data_api_and_non_api_assets() {
+		return [
+			'a plugins update check with a mixture of non-API plugins, API plugins, non-API themes, and API themes' => [
+				'url'      => '/plugins/update-check/1.0/',
+				'plugins'  => [
+					'non-api-plugin/non-api-plugin.php' => [
+						'Name'      => 'Non-API Plugin',
+						'UpdateURI' => 'https://another.api.org',
+					],
+					'api-plugin/api-plugin.php'         => [
+						'Name' => 'API Plugin',
+					],
+					'non-api-plugin-2/non-api-plugin-2.php' => [
+						'Name'      => 'Non-API Plugin 2',
+						'UpdateURI' => 'https://yet-another.api.org',
+					],
+				],
+				'themes'   => [
+					'api-block-theme'       => [
+						'Name' => 'API Block Theme',
+					],
+					'api-classic-theme'     => [
+						'Name' => 'API Classic Theme',
+					],
+					'non-api-block-theme'   => [
+						'Name'      => 'Non-API Block Theme',
+						'UpdateURI' => 'https://another.api.org',
+					],
+					'non-api-classic-theme' => [
+						'Name'      => 'Non-API Classic Theme',
+						'UpdateURI' => 'https://yet-another.api.org',
+					],
+				],
+				'expected' => [
+					'plugins' => [
+						'api-plugin/api-plugin.php',
+					],
+					'themes'  => [
+						'api-block-theme',
+						'api-classic-theme',
+						'non-api-block-theme',
+						'non-api-classic-theme',
+					],
+				],
+			],
+			'a themes update check with a mixture of non-API plugins, API plugins, non-API themes, and API themes' => [
+				'url'      => '/themes/update-check/1.0/',
+				'plugins'  => [
+					'non-api-plugin/non-api-plugin.php' => [
+						'Name'      => 'Non-API Plugin',
+						'UpdateURI' => 'https://another.api.org',
+					],
+					'api-plugin/api-plugin.php'         => [
+						'Name' => 'API Plugin',
+					],
+					'non-api-plugin-2/non-api-plugin-2.php' => [
+						'Name'      => 'Non-API Plugin 2',
+						'UpdateURI' => 'https://yet-another.api.org',
+					],
+				],
+				'themes'   => [
+					'api-block-theme'       => [
+						'Name' => 'API Block Theme',
+					],
+					'api-classic-theme'     => [
+						'Name' => 'API Classic Theme',
+					],
+					'non-api-block-theme'   => [
+						'Name'      => 'Non-API Block Theme',
+						'UpdateURI' => 'https://another.api.org',
+					],
+					'non-api-classic-theme' => [
+						'Name'      => 'Non-API Classic Theme',
+						'UpdateURI' => 'https://yet-another.api.org',
+					],
+				],
+				'expected' => [
+					'plugins' => [
+						'non-api-plugin/non-api-plugin.php',
+						'api-plugin/api-plugin.php',
+						'non-api-plugin-2/non-api-plugin-2.php',
+					],
+					'themes'  => [
+						'api-block-theme',
+						'api-classic-theme',
+					],
+				],
+			],
+		];
+	}
+
+	/**
 	 * Test that a WP_Error object is not returned for some response codes.
 	 *
 	 * @dataProvider data_response_codes_that_should_not_error
