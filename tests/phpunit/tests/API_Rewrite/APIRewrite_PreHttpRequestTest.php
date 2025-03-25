@@ -727,6 +727,87 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that AspireUpdate is removed from information responses.
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::get_request_type
+	 * @covers \AspireUpdate\API_Rewrite::get_asset_type
+	 */
+	public function test_should_remove_aspireupdate_from_info_response() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'body'     => wp_json_encode(
+						[
+							'plugins' => [
+								'akismet/akismet.php'   => [
+									'name' => 'Akismet',
+									'slug' => 'akismet',
+								],
+								'aspireupdate/aspire-update.php' => [
+									'name' => 'AspireUpdate',
+									'slug' => 'aspireupdate',
+								],
+								'hello-dolly/hello.php' => [
+									'name' => 'Hello Dolly',
+									'slug' => 'hello-dolly',
+								],
+								'fakeaspireupdate/fake-aspire-update.php' => [
+									'name' => 'Fake AspireUpdate',
+									'slug' => 'aspireupdate',
+								],
+							],
+						]
+					),
+					'response' => [
+						'code' => 200,
+					],
+				];
+			}
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', false, '' );
+		$response    = $api_rewrite->pre_http_request(
+			[],
+			[],
+			'https://' . $this->get_default_host() . '/plugins/info/1.0/'
+		);
+
+		// Check the outer shape of the response's value.
+		$this->assertIsArray( $response, 'The response is not an array.' );
+		$this->assertArrayHasKey( 'body', $response, "The response array has no 'body' key." );
+		$this->assertIsString( $response['body'], "The response's 'body' value is not a string." );
+
+		$body = json_decode( $response['body'], true );
+		$this->assertIsArray( $body, "The response's 'body' value did not decode to an array." );
+
+		// Check that the 'body' value has a 'plugins' key whose value decodes to an array.
+		$this->assertArrayHasKey( 'plugins', $body, "The response's 'body' value does not have a 'plugins' key." );
+		$this->assertIsArray( $body['plugins'], "The response's 'plugins' value is not an array." );
+
+		// Check that the canonical AspireUpdate is not included.
+		$this->assertNotContains(
+			'aspireupdate/aspire-update.php',
+			array_keys( $body['plugins'] ),
+			"The response's 'plugins' value contains AspireUpdate."
+		);
+
+		// Check that a fake AspireUpdate using the same slug is not included.
+		$this->assertNotContains(
+			'fakeaspireupdate/fake-aspire-update.php',
+			array_keys( $body['plugins'] ),
+			"The response's 'plugins' value contains a fake AspireUpdate."
+		);
+
+		// Check that non-AspireUpdate plugins are included.
+		$this->assertSame(
+			[ 'akismet/akismet.php', 'hello-dolly/hello.php' ],
+			array_keys( $body['plugins'] ),
+			"The response's 'plugins' value contains an unexpected list of plugins."
+		);
+	}
+
+	/**
 	 * Test that a WP_Error object is not returned for some response codes.
 	 *
 	 * @dataProvider data_response_codes_that_should_not_error
