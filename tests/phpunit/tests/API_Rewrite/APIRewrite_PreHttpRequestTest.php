@@ -12,6 +12,42 @@
  */
 class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	/**
+	 * Original theme directory.
+	 *
+	 * @var string
+	 */
+	private static $orig_theme_dir;
+
+	/**
+	 * Set up the test theme directory before any tests run.
+	 *
+	 * @return void
+	 */
+	public static function set_up_before_class() {
+		parent::set_up_before_class();
+
+		self::$orig_theme_dir            = $GLOBALS['wp_theme_directories'];
+		$GLOBALS['wp_theme_directories'] = [ realpath( dirname( __DIR__, 2 ) . '/data/themes' ) ];
+
+		wp_clean_themes_cache();
+		unset( $GLOBALS['wp_themes'] );
+	}
+
+	/**
+	 * Restore the original theme directory after all tests run.
+	 *
+	 * @return void
+	 */
+	public static function tear_down_after_class() {
+		$GLOBALS['wp_theme_directories'] = self::$orig_theme_dir;
+
+		wp_clean_themes_cache();
+		unset( $GLOBALS['wp_themes'] );
+
+		parent::tear_down_after_class();
+	}
+
+	/**
 	 * Test that no request is performed when the redirected host is an empty string.
 	 */
 	public function test_should_not_perform_request_when_redirected_host_is_an_empty_string() {
