@@ -427,6 +427,135 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that non-API assets are removed from update check requests.
+	 *
+	 * @dataProvider data_api_and_non_api_assets
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::get_request_type
+	 * @covers \AspireUpdate\API_Rewrite::get_asset_type
+	 * @covers \AspireUpdate\API_Rewrite::get_non_api_assets
+	 *
+	 * @param string $url      The URL to test.
+	 * @param array  $plugins  An array of test plugin headers, keyed on each plugin's filepath relative to the plugin's directory.
+	 * @param array  $themes   An array of test theme headers, keyed on each theme's slug.
+	 * @param array  $expected The keys of the expected assets to be sent in the request after removing non-API assets.
+	 */
+	public function test_should_remove_non_api_assets_from_update_request( $url, $plugins, $themes, $expected ) {
+		wp_cache_set( 'plugins', [ '' => $plugins ], 'plugins' );
+
+		$arguments = [];
+		add_filter(
+			'pre_http_request',
+			static function ( $url, $parsed_args ) use ( &$arguments ) {
+				$arguments = $parsed_args;
+				return $url;
+			},
+			10,
+			2
+		);
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', false, '' );
+		$api_rewrite->pre_http_request(
+			[],
+			[
+				'body' => [
+					'plugins' => wp_json_encode( [ 'plugins' => $plugins ] ),
+					'themes'  => wp_json_encode( [ 'themes' => $themes ] ),
+				],
+			],
+			'https://' . $this->get_default_host() . $url
+		);
+
+		wp_cache_delete( 'plugins', 'plugins' );
+
+		// Check the outer shape of the request's arguments value.
+		$this->assertIsArray( $arguments, "The request's arguments are not an array." );
+		$this->assertArrayHasKey( 'body', $arguments, "There is no 'body' key in the request's arguments." );
+		$this->assertIsArray( $arguments['body'], "The request's 'body' value is not an array." );
+
+		// Check that the 'body' value has asset keys.
+		$this->assertArrayHasKey( 'plugins', $arguments['body'], "The request's body does not have a 'plugins' key." );
+		$this->assertArrayHasKey( 'themes', $arguments['body'], "The request's body does not have a 'themes' key." );
+
+		// Check that the 'plugins' and 'themes' values are JSON-encoded arrays.
+		$this->assertIsString( $arguments['body']['plugins'], "The request's 'plugins' value is not a string." );
+		$this->assertIsString( $arguments['body']['themes'], "The request's 'themes' value is not a string." );
+
+		$plugins = json_decode( $arguments['body']['plugins'], true );
+		$themes  = json_decode( $arguments['body']['themes'], true );
+
+		$this->assertIsArray( $plugins, "The request's 'plugins' value did not decode to an array." );
+		$this->assertIsArray( $themes, "The request's 'themes' value did not decode to an array." );
+
+		// Check that the 'plugins' and 'themes' arrays have 'plugins' and 'themes' sub-keys which are arrays.
+		$this->assertArrayHasKey( 'plugins', $plugins, "The request's 'plugins' array does not have a 'plugins' key." );
+		$this->assertArrayHasKey( 'themes', $themes, "The request's 'themes' array does not have a 'themes' key." );
+		$this->assertIsArray( $plugins['plugins'], "The request's 'plugins' array's 'plugins' sub-value is not an array." );
+		$this->assertIsArray( $themes['themes'], "The request's 'themes' array's 'themes' sub-value is not an array." );
+
+		// Check that the values of the 'plugins' and 'themes' sub-arrays are as expected.
+		$this->assertSame(
+			$expected['plugins'],
+			array_keys( $plugins['plugins'] ),
+			"The request's 'plugins' array's 'plugins' sub-value contains an unexpected list of plugins."
+		);
+
+		$this->assertSame(
+			$expected['themes'],
+			array_keys( $themes['themes'] ),
+			"The request's 'themes' array's 'themes' sub-value contains an unexpected list of themes."
+		);
+	}
+
+	/**
+	 * Test that non-API assets are not removed from non-update requests.
+	 *
+	 * @dataProvider data_api_and_non_api_assets
+	 *
+	 * @param string $url      The URL to test.
+	 * @param array  $plugins  An array of test plugin headers, keyed on each plugin's filepath relative to the plugin's directory.
+	 * @param array  $themes   An array of test theme headers, keyed on each theme's slug.
+	 * @param array  $expected The keys of the expected assets to be left in the response after removing non-API assets.
+	 */
+	public function test_should_not_remove_assets_for_non_update_requests( $url, $plugins, $themes, $expected ) {
+		$body = wp_json_encode(
+			[
+				'plugins' => [ 'plugins' => $plugins ],
+				'themes'  => [ 'themes' => $themes ],
+			]
+		);
+
+		add_filter(
+			'pre_http_request',
+			static function () use ( $body ) {
+				return [
+					'body'     => $body,
+					'response' => [
+						'code' => 200,
+					],
+				];
+			}
+		);
+
+		wp_cache_set( 'plugins', [ '' => $plugins ], 'plugins' );
+
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', false, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[ 'body' => $body ],
+			'https://' . $this->get_default_host() . '/plugins/info/1.0/'
+		);
+
+		wp_cache_delete( 'plugins', 'plugins' );
+
+		// Check the outer shape of the response's value.
+		$this->assertIsArray( $actual, 'The response is not an array.' );
+		$this->assertArrayHasKey( 'body', $actual, "The response array has no 'body' key." );
+
+		$this->assertSame( $body, $actual['body'], "The request's 'body' was changed unexpectedly." );
+	}
+
+	/**
 	 * Data provider.
 	 *
 	 * @return array[]
