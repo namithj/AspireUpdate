@@ -556,6 +556,81 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that non-API assets are removed from update check responses.
+	 *
+	 * @dataProvider data_api_and_non_api_assets
+	 *
+	 * @covers \AspireUpdate\API_Rewrite::get_request_type
+	 * @covers \AspireUpdate\API_Rewrite::get_asset_type
+	 * @covers \AspireUpdate\API_Rewrite::get_non_api_assets
+	 *
+	 * @param string $url      The URL to test.
+	 * @param array  $plugins  An array of test plugin headers, keyed on each plugin's filepath relative to the plugin's directory.
+	 * @param array  $themes   An array of test theme headers, keyed on each theme's slug.
+	 * @param array  $expected The keys of the expected assets to be left in the response after removing non-API assets.
+	 */
+	public function test_should_remove_non_api_assets_from_update_response( $url, $plugins, $themes, $expected ) {
+		add_filter(
+			'pre_http_request',
+			static function () use ( $plugins, $themes ) {
+				return [
+					'body'     => wp_json_encode(
+						[
+							'plugins' => $plugins,
+							'themes'  => $themes,
+						]
+					),
+					'response' => [
+						'code' => 200,
+					],
+				];
+			}
+		);
+
+		wp_cache_set( 'plugins', [ '' => $plugins ], 'plugins' );
+		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', false, '' );
+		$actual      = $api_rewrite->pre_http_request(
+			[],
+			[
+				'body' => [
+					'plugins' => wp_json_encode( [ 'plugins' => $plugins ] ),
+					'themes'  => wp_json_encode( [ 'themes' => $themes ] ),
+				],
+			],
+			'https://' . $this->get_default_host() . $url
+		);
+
+		wp_cache_delete( 'plugins', 'plugins' );
+
+		// Check the outer shape of the response's value.
+		$this->assertIsArray( $actual, 'The response is not an array.' );
+		$this->assertArrayHasKey( 'body', $actual, "The response array has no 'body' key." );
+		$this->assertIsString( $actual['body'], "The response's 'body' value is not a string." );
+
+		$body = json_decode( $actual['body'], true );
+		$this->assertIsArray( $body, "The response's 'body' value did not decode to an array." );
+
+		// Check that the 'body' value has asset keys whose values decode to arrays.
+		$this->assertArrayHasKey( 'plugins', $body, "The response's 'body' value does not have a 'plugins' key." );
+		$this->assertArrayHasKey( 'themes', $body, "The response's 'body' value does not have a 'themes' key." );
+		$this->assertIsArray( $body['plugins'], "The response's 'plugins' value did not decode to an array." );
+		$this->assertIsArray( $body['themes'], "The response's 'themes' value did not decode to an array." );
+
+		// Check that the values of the 'plugins' and 'themes' are as expected.
+		$this->assertSame(
+			$expected['plugins'],
+			array_keys( $body['plugins'] ),
+			"The response's 'plugins' value contains an unexpected list of plugins."
+		);
+
+		$this->assertSame(
+			$expected['themes'],
+			array_keys( $body['themes'] ),
+			"The response's 'themes' value contains an unexpected list of themes."
+		);
+	}
+
+	/**
 	 * Data provider.
 	 *
 	 * @return array[]
