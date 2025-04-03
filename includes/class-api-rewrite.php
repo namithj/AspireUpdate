@@ -272,7 +272,7 @@ class API_Rewrite {
 						$message = wp_remote_retrieve_response_message( $response );
 						Debug::log_string(
 							sprintf(
-								/* translators: %s: The response message. */
+								/* translators: %s: The error message. */
 								__( 'Request Failed: %s', 'aspireupdate' ),
 								$message
 							)
