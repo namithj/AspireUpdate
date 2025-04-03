@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AP_VERSION' ) ) {
-	define( 'AP_VERSION', '0.6.2' );
+	define( 'AP_VERSION', '0.9' );
 }
 
 
