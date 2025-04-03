@@ -10,7 +10,7 @@
  * Plugin Name:       AspireUpdate
  * Plugin URI:        https://aspirepress.org/
  * Description:       Update plugins and themes for WordPress.
- * Version:           0.6.2
+ * Version:           0.9
  * Author:            AspirePress
  * Author URI:        https://docs.aspirepress.org/aspireupdate/
  * Requires at least: 5.3
