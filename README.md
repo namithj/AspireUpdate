@@ -91,3 +91,7 @@ If you need help with this plugin, please file an issue explaining the following
 - Why you think this is wrong
 
 Issues that are not filed with this information will be closed. We will do our best to assist, but we cannot guarantee a response.
+
+## Changelog
+
+See [CHANGES.md](CHANGES.md) for a list of changes.
