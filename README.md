@@ -38,7 +38,7 @@ The plugin can use the following configuration options in wp-config.php:
 | :---------------------- | -------------------------------------------------------------------------------------------------------: | -------------------------------------: |
 | AP_ENABLE               |                                                                                       Enable API rewrite |                                  false |
 | AP_API_KEY              |                                                     The API Key for AspireCloud (not currently enforced) |                                        |
-| AP_HOST                 |                                                                                          API domain name |                    api.aspirecloud.org |
+| AP_HOST                 |                                                                                          API domain name |                    api.aspirecloud.net |
 | AP_DEBUG                |                                                                                        Enable Debug Mode |                                  false |
 | AP_DEBUG_TYPES          |                                                                                  an array of debug modes | array('string', 'request', 'response') |
 | AP_DISABLE_SSL          |                                                              Disabled SSL verification for local testing |                                   true |
@@ -67,12 +67,6 @@ The AspireUpdate stable build ('playground-ready' branch) can be [tested with in
 
 The AspireUpdate log file is located under /wp-content and named "debug-aspire-update.log".
 
-## Authentication
-
-Authentication is provided by way of a randomly generated token combined with the `WP_SITEURL` constant. This token is
-then Base64-encoded with the separate parts of the credentials separated by a colon. It's added to the `Authorization`
-header.
-
 ## License
 
 This plugin is licensed under the GPLv2, as it is a WordPress plugin and that is the license required.
@@ -98,29 +92,6 @@ If you need help with this plugin, please file an issue explaining the following
 
 Issues that are not filed with this information will be closed. We will do our best to assist, but we cannot guarantee a response.
 
-## CHANGELOG
+## Changelog
 
-0.6.1 - Feb 12 2025
-* Added AspireCloud.io endpoint for bleeding edge testing
-* Added content type json header for better error retrieval from AC
-
-0.6 - Nov 13 2024
-* Admin Settings: Added notices for when settings are saved or reset
-* Branding: Added branded notices to inform users when AspireUpdate is in operation on a screen
-* Multisite: Added multisite support
-* Debug: Added Clear Logs and View Logs functionality
-* I18N: Added Catalan translation
-* I18N: Added Dutch translation
-* I18N: Added Spanish translation
-* I18N: Added Swedish translation
-* I18N: Updated Dutch translation
-* I18N: Updated French translation
-* I18N: Updated German translation
-* Testing: Added Git Updater integration
-* Testing: Added support both main and playground-ready links in the README
-* Testing: Made Playground default to the `main` branch
-* Testing: Removed Hello Dolly from the Playground blueprint
-* Security: Fixed Plugin Check security warnings
-
-= 0.5 - Oct 2024
-* first stable version, connects to api.wordpress.org or an alternative AspireCloud repository
+See [CHANGES.md](CHANGES.md) for a list of changes.
