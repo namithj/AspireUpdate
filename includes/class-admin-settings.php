@@ -82,8 +82,11 @@ class Admin_Settings {
 	 * @return array The default values.
 	 */
 	private function get_default_settings() {
-		$options             = [];
-		$options['api_host'] = 'https://api.aspirecloud.net';
+		$options                  = [];
+		$options['api_host']      = 'https://api.aspirecloud.net';
+		$options['compatibility'] = [
+			'skip_rewriting_on_existing_response' => true,
+		];
 		return $options;
 	}
 
@@ -184,12 +187,13 @@ class Admin_Settings {
 	 */
 	public function get_setting( $setting_name, $default_value = false ) {
 		if ( null === $this->options ) {
-			$options = get_site_option( $this->option_name, false );
+			$options          = get_site_option( $this->option_name, false );
+			$default_settings = $this->get_default_settings();
 			/**
 			 * If the options are not set load defaults.
 			 */
-			if ( false === $options ) {
-				$options = $this->get_default_settings();
+			if ( false === $options || ! empty( array_diff_key( $options, $default_settings ) ) ) {
+				$options = is_array( $options ) ? wp_parse_args( $options, $default_settings ) : $default_settings;
 				update_site_option( $this->option_name, $options );
 			}
 			$config_file_options = $this->get_settings_from_config_file();
@@ -210,6 +214,7 @@ class Admin_Settings {
 					}
 					$options['enable_debug_type'] = $debug_types;
 				}
+
 				$this->options = wp_parse_args( $config_file_options, $options );
 			}
 		}
@@ -240,6 +245,12 @@ class Admin_Settings {
 			define( 'AP_API_KEY', '' );
 		} else {
 			$options['api_key'] = AP_API_KEY;
+		}
+
+		if ( ! defined( 'AP_COMPATIBILITY' ) ) {
+			define( 'AP_COMPATIBILITY', [ 'skip_rewriting_on_existing_response' => true ] );
+		} else {
+			$options['compatibility'] = AP_COMPATIBILITY;
 		}
 
 		if ( ! defined( 'AP_DEBUG' ) ) {
@@ -495,6 +506,23 @@ class Admin_Settings {
 			]
 		);
 
+		add_settings_field(
+			'compatibility',
+			esc_html__( 'Compatibility', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_settings_section',
+			[
+				'id'          => 'compatibility',
+				'type'        => 'checkbox-group',
+				'data'        => $options,
+				'options'     => [
+					'skip_rewriting_on_existing_response' => esc_html__( 'Skip API rewriting if another plugin already appears to be rewriting API requests', 'aspireupdate' ),
+				],
+				'description' => esc_html__( 'Increase compatibility with other plugins.', 'aspireupdate' ),
+			]
+		);
+
 		add_settings_section(
 			'aspireupdate_debug_settings_section',
 			esc_html__( 'API Debug Configuration', 'aspireupdate' ),
@@ -671,6 +699,19 @@ class Admin_Settings {
 		$sanitized_input['api_key']        = sanitize_text_field( $input['api_key'] ?? '' );
 		$sanitized_input['api_host']       = sanitize_text_field( $input['api_host'] ?? '' );
 		$sanitized_input['api_host_other'] = sanitize_text_field( $input['api_host_other'] ?? '' );
+
+		if ( isset( $input['compatibility'] ) && is_array( $input['compatibility'] ) ) {
+			$sanitized_input['compatibility'] = array_map(
+				function ( $value ) {
+					return (int) ! empty( $value );
+				},
+				$input['compatibility']
+			);
+		} else {
+			$sanitized_input['compatibility'] = [
+				'skip_rewriting_on_existing_response' => 0,
+			];
+		}
 
 		$sanitized_input['enable_debug'] = (int) ! empty( $input['enable_debug'] );
 		if ( isset( $input['enable_debug_type'] ) && is_array( $input['enable_debug_type'] ) ) {

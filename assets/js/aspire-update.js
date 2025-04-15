@@ -138,7 +138,8 @@ class ApiRewrites {
 		init() {
 			ApiRewrites.enabled_rewrites.sub_fields = [
 				ApiRewrites.host_selector,
-				ApiRewrites.api_key
+				ApiRewrites.api_key,
+				ApiRewrites.compatibility
 			];
 
 			ApiRewrites.enabled_rewrites.field.change(function () {
@@ -303,6 +304,9 @@ class ApiRewrites {
 		hide_error() {
 			ApiRewrites.api_key.field.parent().find('.error').html('').hide();
 		}
+	}
+	static compatibility = {
+		field: jQuery('.aspireupdate-settings-field-wrapper-compatibility'),
 	}
 }
 
