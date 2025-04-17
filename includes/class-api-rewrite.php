@@ -275,9 +275,9 @@ class API_Rewrite {
 					/**
 					 * Temporarily Unhook Filter to prevent recursion.
 					 */
-					remove_filter( 'pre_http_request', [ $this, 'pre_http_request' ] );
+					remove_filter( 'pre_http_request', [ $this, 'pre_http_request' ], PHP_INT_MAX );
 					$response = wp_remote_request( $updated_url, $parsed_args );
-					add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
+					add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], PHP_INT_MAX, 3 );
 
 					Debug::log_response( $response );
 
