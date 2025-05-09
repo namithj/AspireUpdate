@@ -7,6 +7,32 @@ jQuery(document).ready(function () {
 	new ViewLog();
 });
 
+class AdminNotice {
+	static add(message, args) {
+		args = {
+			type: args.type || 'info',
+			dismissible: typeof args.dismissible !== 'undefined' ? args.dismissible : true,
+			id: args.id || 'aspireupdate-notice'
+		};
+
+		let existingNotice = jQuery(`#${args.id}`);
+		let adminNotice = jQuery(`
+			<div id="${args.id}" class="notice notice-${args.type}${args.dismissible ? ' is-dismissible' : ''}">
+				<p>${message}</p>
+			</div>
+		`);
+
+		if (existingNotice.length > 0) {
+			existingNotice.replaceWith(adminNotice);
+		} else {
+			jQuery('h1').after(adminNotice);
+		}
+
+		// Adds dismiss functionality to dismissible notices.
+		jQuery(document).trigger('wp-notice-added');
+	}
+}
+
 class ClearLog {
 	constructor() {
 		ClearLog.clearlog_button.init();
@@ -34,16 +60,27 @@ class ClearLog {
 					"action": "aspireupdate_clear_log"
 				}
 			};
+			let noticeId = 'aspireupdate-clearlog-notice';
+
 			jQuery.ajax(parameters)
 				.done(function (response) {
-					if ('' != response.data.message) {
-						alert(response.data.message);
+					if (response.success) {
+						AdminNotice.add(
+							response.data.message,
+							{type: 'success', id: noticeId}
+						);
 					} else {
-						alert(aspireupdate.unexpected_error);
+						AdminNotice.add(
+							response.data.message || aspireupdate.unexpected_error,
+							{type: 'error', id: noticeId}
+						);
 					}
 				})
 				.fail(function (response) {
-					alert(aspireupdate.unexpected_error);
+					AdminNotice.add(
+						response.data.message || aspireupdate.unexpected_error,
+						{type: 'error', id: noticeId}
+					);
 				});
 		},
 	}
@@ -94,6 +131,8 @@ class ViewLog {
 					"action": "aspireupdate_read_log"
 				}
 			};
+			let noticeId = 'aspireupdate-viewlog-notice';
+
 			jQuery.ajax(parameters)
 				.done(function (response) {
 					if ((true == response.success) && ('' != response.data.content)) {
@@ -107,14 +146,18 @@ class ViewLog {
 								.appendTo(ViewLog.viewlog_popup.popup_inner);
 						});
 						ViewLog.viewlog_popup.field.show();
-					} else if ('' != response.data.message) {
-						alert(response.data.message);
 					} else {
-						alert(aspireupdate.unexpected_error);
+						AdminNotice.add(
+							response.data.message || aspireupdate.unexpected_error,
+							{type: 'error', id: noticeId}
+						);
 					}
 				})
 				.fail(function (response) {
-					alert(aspireupdate.unexpected_error);
+					AdminNotice.add(
+						response.data.message || aspireupdate.unexpected_error,
+						{type: 'error', id: noticeId}
+					);
 				});
 		},
 		close() {
