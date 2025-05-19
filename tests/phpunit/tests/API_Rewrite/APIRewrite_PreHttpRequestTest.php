@@ -148,7 +148,6 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 		$api_rewrite = new AspireUpdate\API_Rewrite( 'https://my.api.org', true, '' );
 		$api_rewrite->pre_http_request( false, [], 'https://' . $this->get_default_host() );
 
-		// $this->assertMatchesRegularExpression( '/my\.api\.org\?cache_buster=[0-9]+/', $actual );
 		$this->assertMatchesRegularExpression( '/my\.api\.org/', $actual );
 	}
 
