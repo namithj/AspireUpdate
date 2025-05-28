@@ -98,6 +98,10 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 		$user = $this->factory->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $user );
 
+		if ( is_multisite() ) {
+			grant_super_admin( $user );
+		}
+
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
 
