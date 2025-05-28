@@ -49,23 +49,12 @@ class Branding {
 	 * @param string $hook The page identifier.
 	 * @return void
 	 */
-	public function admin_enqueue_scripts( $hook ) {
+	public function admin_enqueue_scripts() {
 		if ( defined( 'AP_REMOVE_UI' ) && AP_REMOVE_UI ) {
 			return;
 		}
 
-		$allowed_screens = [
-			'update-core',
-			'plugins',
-			'plugin-install',
-			'themes',
-			'theme-install',
-		];
-
-		$screen = \WP_Screen::get( $hook );
-		if ( in_array( $screen->id, $allowed_screens, true ) ) {
-			wp_enqueue_style( 'aspire_update_settings_css', plugin_dir_url( __DIR__ ) . 'assets/css/aspire-update.css', [], AP_VERSION );
-		}
+		wp_enqueue_style( 'aspire_update_settings_css', plugin_dir_url( __DIR__ ) . 'assets/css/aspire-update.css', [], AP_VERSION );
 	}
 
 	/**
