@@ -147,6 +147,11 @@ class Branding {
 		$settings_page  = network_admin_url( $options_base . '?page=aspireupdate-settings' );
 		$menu_id        = 'aspireupdate-admin-bar-menu';
 
+		$hosts_data = Utilities::get_hosts_data();
+		if ( false === $hosts_data && ! is_array( $hosts_data ) ) {
+			return;
+		}
+
 		$wp_admin_bar->add_menu(
 			[
 				'id'     => $menu_id,
@@ -159,7 +164,7 @@ class Branding {
 		/* translators: 1: The API host's name. */
 		$status_message = __( 'API host: %1$s', 'aspireupdate' );
 		$api_host       = $admin_settings->get_setting( 'api_host' );
-		switch ( $api_host ) {
+		/*switch ( $api_host ) {
 			case 'https://api.aspirecloud.net':
 				$api_host_name = 'AspireCloud';
 				break;
@@ -169,6 +174,21 @@ class Branding {
 			default:
 				$api_host_name = $api_host;
 				break;
+		}*/
+
+		$api_host_name = array_filter(
+			$hosts_data,
+			function ( $host_data ) use ( $api_host ) {
+				return isset( $host_data['url'] ) && $host_data['url'] === $api_host;
+			}
+		);
+		if ( is_array( $api_host_name ) && ! empty( $api_host_name ) ) {
+			$api_host_name = reset( $api_host_name );
+		} else {
+			$api_host_name = [
+				'label' => $api_host,
+				'url'   => $api_host,
+			];
 		}
 
 		$wp_admin_bar->add_menu(
@@ -176,7 +196,7 @@ class Branding {
 				'id'     => 'aspireupdate-admin-bar-menu-status',
 				'parent' => $menu_id,
 				'href'   => $settings_page . '#aspireupdate-settings-field-api_host',
-				'title'  => sprintf( $status_message, $api_host_name ),
+				'title'  => sprintf( $status_message, $api_host_name['label'] ),
 			]
 		);
 

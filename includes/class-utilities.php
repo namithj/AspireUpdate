@@ -12,6 +12,13 @@ namespace AspireUpdate;
  */
 class Utilities {
 	/**
+	 * Hold a single instance of the hosts_data.
+	 *
+	 * @var object
+	 */
+	private static $hosts_data = null;
+
+	/**
 	 * Get the domain name from the site URL.
 	 *
 	 * @return string The domain name.
@@ -44,6 +51,10 @@ class Utilities {
 	 * @return array|false The hosts data as an associative array, or false on failure.
 	 */
 	public static function get_hosts_data() {
+		if ( null !== self::$hosts_data ) {
+			return self::$hosts_data;
+		}
+
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -69,6 +80,7 @@ class Utilities {
 			return false;
 		}
 
+		self::$hosts_data = $json_data;
 		return $json_data;
 	}
 }

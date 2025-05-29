@@ -479,8 +479,11 @@ class Admin_Settings {
 							/* translators: 1: The name of the API Service */
 							__( '%1$s (%2$s)', 'aspireupdate' ),
 							( $host_data['label'] ?? '' ),
-							'https://api.aspirecloud.net'
+							$host_data['url']
 						);
+						if('other' === $host_data_processed['value']) {
+							$host_data_processed['label'] = esc_html__( 'Other', 'aspireupdate' );
+						}
 						$host_data_processed['api-key-url']     = $host_data['api-key-url'] ?? '';
 						$host_data_processed['require-api-key'] = $host_data['require-api-key'] ?? 'false';
 
