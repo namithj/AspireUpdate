@@ -481,7 +481,7 @@ class Admin_Settings {
 							( $host_data['label'] ?? '' ),
 							$host_data['url']
 						);
-						if('other' === $host_data_processed['value']) {
+						if ( 'other' === $host_data_processed['value'] ) {
 							$host_data_processed['label'] = esc_html__( 'Other', 'aspireupdate' );
 						}
 						$host_data_processed['api-key-url']     = $host_data['api-key-url'] ?? '';
