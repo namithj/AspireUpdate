@@ -44,6 +44,19 @@
 	width: 20px;
 }
 
+#wp-admin-bar-aspireupdate-admin-bar-menu .aspireupdate-icon {
+	margin-inline-end: 0 !important;
+	padding: 6px 0.35em 0 !important;
+}
+
+#wp-admin-bar-aspireupdate-admin-bar-menu .aspireupdate-icon:before {
+	background: url(../images/aspirepress-logo-icon.svg) no-repeat center center / 20px 20px;
+	content: '';
+	width: 20px;
+	height: 20px;
+	display: block;
+}
+
 .button.button-clearlog {
 	border-color: #b32d2e;
 	color: #b32d2e;
