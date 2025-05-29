@@ -23,74 +23,12 @@ class Branding_AdminEnqueueScriptsTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the stylesheet is enqueued on certain screens.
-	 *
-	 * @dataProvider data_hooks
-	 *
-	 * @param string $hook The current screen's hook.
+	 * Test that the stylesheet is enqueued.
 	 */
-	public function test_should_enqueue_style_on_certain_screens( $hook ) {
+	public function test_should_enqueue_style() {
 		$branding = new AspireUpdate\Branding();
-		$branding->admin_enqueue_scripts( $hook );
+		$branding->admin_enqueue_scripts();
 		$this->assertTrue( wp_style_is( 'aspire_update_settings_css' ) );
-	}
-
-	/**
-	 * Data provider.
-	 *
-	 * @return array[]
-	 */
-	public function data_hooks() {
-		return self::text_array_to_dataprovider(
-			[
-				'update-core',
-				'plugins',
-				'plugin-install',
-				'themes',
-				'theme-install',
-			]
-		);
-	}
-
-	/**
-	 * Test that the stylesheet is not enqueued on adjacent screens.
-	 *
-	 * @dataProvider data_adjacent_screens
-	 *
-	 * @param string $hook The current screen's hook.
-	 */
-	public function test_should_not_enqueue_style_on_adjacent_screens( $hook ) {
-		if ( is_multisite() ) {
-			$hook .= '-network';
-		}
-
-		$branding = new AspireUpdate\Branding();
-		$branding->admin_enqueue_scripts( $hook );
-		$this->assertFalse( wp_style_is( 'aspire_update_settings_css' ) );
-	}
-
-	/**
-	 * Data provider.
-	 *
-	 * @return array[]
-	 */
-	public function data_adjacent_screens() {
-		return self::text_array_to_dataprovider(
-			[
-				'dashboard',
-				'nav-menus',
-				'plugin-editor',
-			]
-		);
-	}
-
-	/**
-	 * Test that the stylesheet is not enqueued when there is no screen.
-	 */
-	public function test_should_not_enqueue_style_when_there_is_no_screen() {
-		$branding = new AspireUpdate\Branding();
-		$branding->admin_enqueue_scripts( '' );
-		$this->assertFalse( wp_style_is( 'aspire_update_settings_css' ) );
 	}
 
 	/**

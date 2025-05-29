@@ -27,6 +27,7 @@ class Branding {
 			$admin_notices_hook = is_multisite() ? 'network_admin_notices' : 'admin_notices';
 			add_action( $admin_notices_hook, [ $this, 'output_admin_notice' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+			add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_menu' ], 100 );
 		}
 	}
 
@@ -48,23 +49,12 @@ class Branding {
 	 * @param string $hook The page identifier.
 	 * @return void
 	 */
-	public function admin_enqueue_scripts( $hook ) {
+	public function admin_enqueue_scripts() {
 		if ( defined( 'AP_REMOVE_UI' ) && AP_REMOVE_UI ) {
 			return;
 		}
 
-		$allowed_screens = [
-			'update-core',
-			'plugins',
-			'plugin-install',
-			'themes',
-			'theme-install',
-		];
-
-		$screen = \WP_Screen::get( $hook );
-		if ( in_array( $screen->id, $allowed_screens, true ) ) {
-			wp_enqueue_style( 'aspire_update_settings_css', plugin_dir_url( __DIR__ ) . 'assets/css/aspire-update.css', [], AP_VERSION );
-		}
+		wp_enqueue_style( 'aspire_update_settings_css', plugin_dir_url( __DIR__ ) . 'assets/css/aspire-update.css', [], AP_VERSION );
 	}
 
 	/**
@@ -94,7 +84,7 @@ class Branding {
 			case 'plugin-install-network':
 				$message = sprintf(
 					/* translators: 1: The name of the plugin, 2: The documentation URL. */
-					__( 'Your plugin updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn more</a>', 'aspireupdate' ),
+					__( 'Your plugin updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn about %1$s</a>', 'aspireupdate' ),
 					'AspireUpdate',
 					__( 'https://docs.aspirepress.org/aspireupdate/', 'aspireupdate' )
 				);
@@ -109,7 +99,7 @@ class Branding {
 			case 'theme-install-network':
 				$message = sprintf(
 					/* translators: 1: The name of the plugin, 2: The documentation URL. */
-					__( 'Your theme updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn more</a>', 'aspireupdate' ),
+					__( 'Your theme updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn about %1$s</a>', 'aspireupdate' ),
 					'AspireUpdate',
 					__( 'https://docs.aspirepress.org/aspireupdate/', 'aspireupdate' )
 				);
@@ -122,7 +112,7 @@ class Branding {
 			case 'update-core-network':
 				$message = sprintf(
 					/* translators: 1: The name of the plugin, 2: The documentation URL. */
-					__( 'Your WordPress, plugin, theme and translation updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn more</a>', 'aspireupdate' ),
+					__( 'Your WordPress, plugin, theme and translation updates are now powered by <strong>%1$s</strong>. <a href="%2$s">Learn about %1$s</a>', 'aspireupdate' ),
 					'AspireUpdate',
 					__( 'https://docs.aspirepress.org/aspireupdate/', 'aspireupdate' )
 				);
@@ -134,5 +124,67 @@ class Branding {
 		}
 
 		echo wp_kses_post( '<div class="notice aspireupdate-notice notice-info"><p>' . $message . '</p></div>' );
+	}
+
+	/**
+	 * Add a menu to the admin bar.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
+	 * @return void
+	 */
+	public function add_admin_bar_menu( $wp_admin_bar ) {
+		if ( defined( 'AP_REMOVE_UI' ) && AP_REMOVE_UI ) {
+			return;
+		}
+
+		$admin_settings = Admin_Settings::get_instance();
+		$options_base   = is_multisite() ? 'settings.php' : 'options-general.php';
+		$settings_page  = network_admin_url( $options_base . '?page=aspireupdate-settings' );
+		$menu_id        = 'aspireupdate-admin-bar-menu';
+
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => $menu_id,
+				'parent' => 'top-secondary',
+				'href'   => $settings_page,
+				'title'  => '<span class="ab-icon aspireupdate-icon"></span><span class="screen-reader-text">' . __( 'AspireUpdate', 'aspireupdate' ) . '</span>',
+			]
+		);
+
+		/* translators: 1: The API host's name. */
+		$status_message = __( 'API host: %1$s', 'aspireupdate' );
+		$api_host       = $admin_settings->get_setting( 'api_host' );
+		switch ( $api_host ) {
+			case 'https://api.aspirecloud.net':
+				$api_host_name = 'AspireCloud';
+				break;
+			case 'https://api.aspirecloud.io':
+				$api_host_name = 'AspireCloud Bleeding Edge';
+				break;
+			default:
+				$api_host_name = $api_host;
+				break;
+		}
+
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => 'aspireupdate-admin-bar-menu-status',
+				'parent' => $menu_id,
+				'href'   => false,
+				'title'  => sprintf( $status_message, $api_host_name ),
+			]
+		);
+
+		$capability = is_multisite() ? 'manage_network' : 'manage_options';
+		if ( current_user_can( $capability ) ) {
+			$wp_admin_bar->add_menu(
+				[
+					'id'     => 'aspireupdate-admin-bar-menu-settings',
+					'parent' => $menu_id,
+					'href'   => $settings_page,
+					'title'  => __( 'AspireUpdate Settings', 'aspireupdate' ),
+				]
+			);
+		}
 	}
 }
