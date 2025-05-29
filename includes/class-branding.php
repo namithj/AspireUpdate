@@ -170,7 +170,7 @@ class Branding {
 			[
 				'id'     => 'aspireupdate-admin-bar-menu-status',
 				'parent' => $menu_id,
-				'href'   => false,
+				'href'   => $settings_page . '#aspireupdate-settings-field-api_host',
 				'title'  => sprintf( $status_message, $api_host_name ),
 			]
 		);
