@@ -137,6 +137,11 @@ class Branding {
 			return;
 		}
 
+		$capability = is_multisite() ? 'manage_network' : 'manage_options';
+		if ( ! current_user_can( $capability ) ) {
+			return;
+		}
+
 		$admin_settings = Admin_Settings::get_instance();
 		$options_base   = is_multisite() ? 'settings.php' : 'options-general.php';
 		$settings_page  = network_admin_url( $options_base . '?page=aspireupdate-settings' );
@@ -170,21 +175,18 @@ class Branding {
 			[
 				'id'     => 'aspireupdate-admin-bar-menu-status',
 				'parent' => $menu_id,
-				'href'   => false,
+				'href'   => $settings_page . '#aspireupdate-settings-field-api_host',
 				'title'  => sprintf( $status_message, $api_host_name ),
 			]
 		);
 
-		$capability = is_multisite() ? 'manage_network' : 'manage_options';
-		if ( current_user_can( $capability ) ) {
-			$wp_admin_bar->add_menu(
-				[
-					'id'     => 'aspireupdate-admin-bar-menu-settings',
-					'parent' => $menu_id,
-					'href'   => $settings_page,
-					'title'  => __( 'AspireUpdate Settings', 'aspireupdate' ),
-				]
-			);
-		}
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => 'aspireupdate-admin-bar-menu-settings',
+				'parent' => $menu_id,
+				'href'   => $settings_page,
+				'title'  => __( 'AspireUpdate Settings', 'aspireupdate' ),
+			]
+		);
 	}
 }
