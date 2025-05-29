@@ -23,6 +23,8 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	 * Test that the main admin bar menu is added.
 	 */
 	public function test_should_add_main_admin_bar_menu() {
+		$this->set_user_to_administrator();
+
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
 
@@ -43,6 +45,8 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	 * Test that the status menu item is added.
 	 */
 	public function test_should_add_status_menu_item() {
+		$this->set_user_to_administrator();
+
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
 
@@ -72,35 +76,10 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the settings link is not added when the user lacks appropriate capabilities.
+	 * Test that the settings link is added.
 	 */
-	public function test_should_not_add_settings_link_when_the_user_lacks_appropriate_capabilities() {
-		$wp_admin_bar = new WP_Admin_Bar();
-		$branding     = new AspireUpdate\Branding();
-
-		$wp_admin_bar->initialize();
-		$branding->add_admin_bar_menu( $wp_admin_bar );
-
-		$actual = $wp_admin_bar->get_nodes();
-
-		$this->assertIsArray( $actual, 'There are no admin bar nodes.' );
-		$this->assertArrayNotHasKey(
-			'aspireupdate-admin-bar-menu-settings',
-			$actual,
-			'The settings link is present.'
-		);
-	}
-
-	/**
-	 * Test that the settings link is added when the user has appropriate capabilities.
-	 */
-	public function test_should_add_settings_link_when_the_user_has_appropriate_capabilities() {
-		$user = $this->factory->user->create( [ 'role' => 'administrator' ] );
-		wp_set_current_user( $user );
-
-		if ( is_multisite() ) {
-			grant_super_admin( $user );
-		}
+	public function test_should_add_settings_link() {
+		$this->set_user_to_administrator();
 
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
@@ -119,14 +98,28 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the menu is not added when AP_REMOVE_UI is set to true.
+	 * Test that the main admin bar menu is not added when the user lacks appropriate capabilities.
 	 */
-	public function test_should_not_enqueue_style_when_ap_remove_ui_is_true() {
+	public function test_should_not_add_main_admin_bar_menu_when_the_user_lacks_appropriate_capabilities() {
+		$wp_admin_bar = new WP_Admin_Bar();
+		$branding     = new AspireUpdate\Branding();
+
+		$wp_admin_bar->initialize();
+		$branding->add_admin_bar_menu( $wp_admin_bar );
+
+		$actual = $wp_admin_bar->get_nodes();
+
+		$this->assertIsNotArray( $actual, 'There are admin bar nodes.' );
+	}
+
+	/**
+	 * Test that the main admin bar menu is not added when AP_REMOVE_UI is set to true.
+	 */
+	public function test_should_not_add_main_admin_bar_menu_when_ap_remove_ui_is_true() {
 		// Prevent the menu from being added.
 		define( 'AP_REMOVE_UI', true );
 
-		$user = $this->factory->user->create( [ 'role' => 'administrator' ] );
-		wp_set_current_user( $user );
+		$this->set_user_to_administrator();
 
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
@@ -149,6 +142,8 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	 */
 	public function test_should_set_status_menu_item_content_depending_on_the_api_host_option( $api_host, $expected_name ) {
 		define( 'AP_HOST', $api_host );
+
+		$this->set_user_to_administrator();
 
 		$wp_admin_bar = new WP_Admin_Bar();
 		$branding     = new AspireUpdate\Branding();
@@ -204,5 +199,21 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 				'expected_name' => 'https://my.api.org',
 			],
 		];
+	}
+
+	/**
+	 * Set the current user to an administrator.
+	 *
+	 * Grants super admin privileges when running multisite.
+	 *
+	 * @return void
+	 */
+	private function set_user_to_administrator() {
+		$user = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $user );
+
+		if ( is_multisite() ) {
+			grant_super_admin( $user );
+		}
 	}
 }
