@@ -35,7 +35,7 @@ if ( ! defined( 'AP_VERSION' ) ) {
 add_action( 'plugins_loaded', 'define_constant' );
 function define_constant() {
 	if ( ! defined( 'AP_PATH' ) ) {
-		define( 'AP_PATH', dirname( plugin_basename( __FILE__ ) ) );
+		define( 'AP_PATH', __DIR__ );
 	}
 }
 

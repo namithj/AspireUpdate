@@ -57,7 +57,11 @@
 	display: block;
 }
 
-.button.button-clearlog {
+#aspireupdate-settings-form p.submit {
+	display: none;
+}
+
+#aspireupdate-settings-form .button.button-clearlog {
 	border-color: #b32d2e;
 	color: #b32d2e;
 }
