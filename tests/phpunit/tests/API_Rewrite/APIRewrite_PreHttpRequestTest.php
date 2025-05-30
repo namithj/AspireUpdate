@@ -150,7 +150,7 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that cache buster is added to URL when AP_DEBUG_BYPASS_CACHE is true.
+	 * Test that cache buster is added to URL when AP_BYPASS_CACHE is true.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
@@ -158,7 +158,7 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	 * @covers \AspireUpdate\API_Rewrite::add_cache_buster
 	 */
 	public function test_should_add_cache_buster_when_debug_bypass_cache_is_true() {
-		define( 'AP_DEBUG_BYPASS_CACHE', true );
+		define( 'AP_BYPASS_CACHE', true );
 
 		$actual = '';
 
@@ -179,13 +179,13 @@ class APIRewrite_PreHttpRequestTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that cache buster is _not_ added to URL when AP_DEBUG_BYPASS_CACHE is false.
+	 * Test that cache buster is _not_ added to URL when AP_BYPASS_CACHE is false.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
 	public function test_should_not_add_cache_buster_when_debug_bypass_cache_is_false() {
-		define( 'AP_DEBUG_BYPASS_CACHE', false );
+		define( 'AP_BYPASS_CACHE', false );
 
 		$actual = '';
 
