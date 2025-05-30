@@ -77,6 +77,8 @@ class ClearLog {
 								previousSibling: ClearLog.clearlog_button.field.parent()
 							}
 						);
+						ClearLog.clearlog_button.hide();
+						ViewLog.viewlog_button.hide();
 					} else {
 						AdminNotice.add(
 							response.data.message || aspireupdate.unexpected_error,
@@ -105,7 +107,6 @@ class ClearLog {
 class ViewLog {
 	constructor() {
 		ViewLog.viewlog_button.init();
-		ViewLog.viewlog_popup.init();
 	}
 
 	static viewlog_button = {
@@ -120,73 +121,6 @@ class ViewLog {
 		},
 		hide() {
 			ViewLog.viewlog_button.field.hide();
-		}
-	}
-
-	static viewlog_popup = {
-		field: jQuery('#aspireupdate-log-viewer'),
-		popup_inner: jQuery('#aspireupdate-log-viewer .inner'),
-		close_button: jQuery('#aspireupdate-log-viewer span.close'),
-		init() {
-			ViewLog.viewlog_popup.close_button.click(function () {
-				ViewLog.viewlog_popup.close();
-			});
-
-			jQuery(document).keydown(function (event) {
-				if ((event.keyCode === 27) && ViewLog.viewlog_popup.field.is(':visible')) {
-					ViewLog.viewlog_popup.close();
-				}
-			});
-		},
-		show() {
-			let parameters = {
-				"url": aspireupdate.ajax_url,
-				"type": "POST",
-				"data": {
-					"nonce": aspireupdate.nonce,
-					"action": "aspireupdate_read_log"
-				}
-			};
-			let noticeId = 'aspireupdate-viewlog-notice';
-
-			jQuery.ajax(parameters)
-				.done(function (response) {
-					if ((true == response.success) && ('' != response.data.content)) {
-						let lines = response.data.content;
-						jQuery.each(lines, function (index, line) {
-							jQuery('<div>')
-								.append(
-									jQuery('<span>').addClass('number'),
-									jQuery('<span>').addClass('content').text(line)
-								)
-								.appendTo(ViewLog.viewlog_popup.popup_inner);
-						});
-						ViewLog.viewlog_popup.field.show();
-					} else {
-						AdminNotice.add(
-							response.data.message || aspireupdate.unexpected_error,
-							{
-								type: 'error',
-								id: noticeId,
-								previousSibling: ViewLog.viewlog_button.field.parent()
-							}
-						);
-					}
-				})
-				.fail(function (response) {
-					AdminNotice.add(
-						response.data.message || aspireupdate.unexpected_error,
-						{
-							type: 'error',
-							id: noticeId,
-							previousSibling: ViewLog.viewlog_button.field.parent()
-						}
-					);
-				});
-		},
-		close() {
-			ViewLog.viewlog_popup.field.hide();
-			ViewLog.viewlog_popup.popup_inner.html('');
 		}
 	}
 }
