@@ -30,7 +30,7 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 	 */
 	public function test_get_hosts_data_contains_expected_keys() {
 		$hosts_data = \AspireUpdate\Utilities::get_hosts_data();
-		$this->assertTrue( is_array( $hosts_data ) );
+		$this->assertIsArray( $hosts_data, 'get_hosts_data() should return an array.' );
 		foreach ( $hosts_data as $host ) {
 			$this->assertArrayHasKey( 'url', $host );
 			$this->assertArrayHasKey( 'label', $host );
