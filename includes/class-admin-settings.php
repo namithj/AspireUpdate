@@ -425,7 +425,7 @@ class Admin_Settings {
 		);
 
 		$hosts_data = Utilities::get_hosts_data();
-		if ( false === $hosts_data && ! is_array( $hosts_data ) ) {
+		if ( ! is_array( $hosts_data ) ) {
 			add_settings_error(
 				$this->option_name,
 				'aspireupdate_hosts_error',
