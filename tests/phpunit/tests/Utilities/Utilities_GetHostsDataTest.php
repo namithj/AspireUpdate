@@ -13,6 +13,21 @@
  */
 class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 	/**
+	 * Reset the hosts_data property before each test.
+	 *
+	 * @return void
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		$prop = new \ReflectionProperty( '\\AspireUpdate\\Utilities', 'hosts_data' );
+		$prop->setAccessible( true );
+		$prop->setValue( null, null );
+		$prop->setAccessible( false );
+	}
+
+
+	/**
 	 * Test that an array is returned by get_hosts_data().
 	 */
 	public function test_get_hosts_data_returns_array() {
@@ -23,8 +38,6 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 
 	/**
 	 * Test that the array elements returned by get_hosts_data() contained the required parameters.
-	 *
-	 * @group ms-required
 	 */
 	public function test_get_hosts_data_contains_expected_keys() {
 		$hosts_data = \AspireUpdate\Utilities::get_hosts_data();
@@ -37,8 +50,6 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 
 	/**
 	 * Test that the get_hosts_data() returns false when the hosts.json file is missing.
-	 *
-	 * @group ms-required
 	 */
 	public function test_get_hosts_data_returns_false_on_missing_file() {
 		global $wp_filesystem;
@@ -47,11 +58,6 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		if ( $file && $wp_filesystem->exists( $file ) ) {
 			$wp_filesystem->move( $file, $backup );
 		}
-		// Clear cached data
-		$ref  = new \ReflectionClass( '\\AspireUpdate\\Utilities' );
-		$prop = $ref->getProperty( 'hosts_data' );
-		$prop->setAccessible( true );
-		$prop->setValue( null, null );
 		$result = \AspireUpdate\Utilities::get_hosts_data();
 		// Restore the file
 		if ( $backup && $wp_filesystem->exists( $backup ) ) {
