@@ -32,8 +32,8 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		$hosts_data = \AspireUpdate\Utilities::get_hosts_data();
 		$this->assertIsArray( $hosts_data, 'get_hosts_data() should return an array.' );
 		foreach ( $hosts_data as $host ) {
-			$this->assertArrayHasKey( 'url', $host );
-			$this->assertArrayHasKey( 'label', $host );
+			$this->assertArrayHasKey( 'url', $host, 'The host URL is not present.' );
+			$this->assertArrayHasKey( 'label', $host, 'The host label is not present.' );
 		}
 	}
 
