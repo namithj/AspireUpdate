@@ -1,7 +1,7 @@
 [
 	{
 		"url": "https://api.wordpress.org",
-		"label": "Wordpress.org",
+		"label": "WordPress.org",
 		"require-api-key": false
 	},
 	{
