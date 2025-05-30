@@ -57,14 +57,13 @@
 	display: block;
 }
 
-p.submit .dashicons {
-	vertical-align: middle;
-	margin-top: -3px;
-}
-
 .button.button-clearlog {
 	border-color: #b32d2e;
 	color: #b32d2e;
+}
+
+#aspireupdate-button-viewlog {
+	margin-left: .5em;
 }
 
 #voltron {

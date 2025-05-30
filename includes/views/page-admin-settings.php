@@ -21,9 +21,8 @@ $log_url         = $args['log_url'] ?? '';
 			<?php if ( $log_file_exists ) : ?>
 				<button type="button" id="aspireupdate-button-clearlog" class="button button-secondary button-clearlog" ><?php esc_html_e( 'Clear Log', 'aspireupdate' ); ?></button>
 				<?php if ( $log_url ) : ?>
-					<a id="aspireupdate-button-viewlog" href="<?php echo esc_url( $log_url ); ?>" target="_blank">
+					<a id="aspireupdate-button-viewlog" href="<?php echo esc_url( $log_url ); ?>">
 						<?php esc_html_e( 'View Log', 'aspireupdate' ); ?>
-						<span class="dashicons dashicons-external" aria-hidden="true"></span>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>
