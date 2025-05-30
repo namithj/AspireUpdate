@@ -164,28 +164,17 @@ class Branding {
 		/* translators: 1: The API host's name. */
 		$status_message = __( 'API host: %1$s', 'aspireupdate' );
 		$api_host       = $admin_settings->get_setting( 'api_host' );
-		/*switch ( $api_host ) {
-			case 'https://api.aspirecloud.net':
-				$api_host_name = 'AspireCloud';
-				break;
-			case 'https://api.aspirecloud.io':
-				$api_host_name = 'AspireCloud Bleeding Edge';
-				break;
-			default:
-				$api_host_name = $api_host;
-				break;
-		}*/
 
-		$api_host_name = array_filter(
+		$selected_host_data = array_filter(
 			$hosts_data,
 			function ( $host_data ) use ( $api_host ) {
 				return isset( $host_data['url'] ) && $host_data['url'] === $api_host;
 			}
 		);
-		if ( is_array( $api_host_name ) && ! empty( $api_host_name ) ) {
-			$api_host_name = reset( $api_host_name );
+		if ( is_array( $selected_host_data ) && ! empty( $selected_host_data ) ) {
+			$selected_host_data = reset( $selected_host_data );
 		} else {
-			$api_host_name = [
+			$selected_host_data = [
 				'label' => $api_host,
 				'url'   => $api_host,
 			];
@@ -196,7 +185,7 @@ class Branding {
 				'id'     => 'aspireupdate-admin-bar-menu-status',
 				'parent' => $menu_id,
 				'href'   => $settings_page . '#aspireupdate-settings-field-api_host',
-				'title'  => sprintf( $status_message, $api_host_name['label'] ),
+				'title'  => sprintf( $status_message, $selected_host_data['label'] ),
 			]
 		);
 

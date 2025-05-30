@@ -46,7 +46,7 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		global $wp_filesystem;
 		$file   = defined( 'AP_PATH' ) ? AP_PATH . DIRECTORY_SEPARATOR . 'hosts.json' : null;
 		$backup = $file ? $file . '.bak' : null;
-		if ( $file && file_exists( $file ) ) {
+		if ( $file && $wp_filesystem->exists( $file ) ) {
 			$wp_filesystem->move( $file, $backup );
 		}
 		// Clear cached data
@@ -56,7 +56,7 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		$prop->setValue( null, null );
 		$result = \AspireUpdate\Utilities::get_hosts_data();
 		// Restore the file
-		if ( $backup && file_exists( $backup ) ) {
+		if ( $backup && $wp_filesystem->exists( $backup ) ) {
 			$wp_filesystem->move( $backup, $file );
 		}
 		$this->assertFalse( $result, 'get_hosts_data() should return false if file is missing' );
