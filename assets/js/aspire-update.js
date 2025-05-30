@@ -137,6 +137,9 @@ class ApiRewrites {
 		field: jQuery('#aspireupdate-settings-field-enable'),
 		sub_fields: [],
 		init() {
+			if( 0 < ApiRewrites.enabled_rewrites.field.length ) {
+				ApiRewrites.submit_buttons.show();
+			}
 			ApiRewrites.enabled_rewrites.sub_fields = [
 				ApiRewrites.host_selector,
 				ApiRewrites.api_key,
@@ -312,6 +315,15 @@ class ApiRewrites {
 	}
 	static compatibility = {
 		field: jQuery('.aspireupdate-settings-field-wrapper-compatibility'),
+	}
+	static submit_buttons = {
+		field: jQuery('p.submit'),
+		show() {
+			ApiRewrites.submit_buttons.field.show();
+		},
+		hide() {
+			ApiRewrites.submit_buttons.field.hide();
+		},
 	}
 }
 

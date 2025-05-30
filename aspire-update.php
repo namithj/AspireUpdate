@@ -15,7 +15,7 @@
  * Author URI:        https://docs.aspirepress.org/aspireupdate/
  * Requires at least: 5.3
  * Requires PHP:      7.4
- * Tested up to:      6.7
+ * Tested up to:      6.8.1
  * License:           GPLv2
  * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
  * Text Domain:       aspireupdate
@@ -35,7 +35,7 @@ if ( ! defined( 'AP_VERSION' ) ) {
 add_action( 'plugins_loaded', 'define_constant' );
 function define_constant() {
 	if ( ! defined( 'AP_PATH' ) ) {
-		define( 'AP_PATH', dirname( plugin_basename( __FILE__ ) ) );
+		define( 'AP_PATH', __DIR__ );
 	}
 }
 

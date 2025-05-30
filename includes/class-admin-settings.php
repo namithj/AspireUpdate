@@ -431,6 +431,17 @@ class Admin_Settings {
 			]
 		);
 
+		$hosts_data = Utilities::get_hosts_data();
+		if ( ! is_array( $hosts_data ) ) {
+			add_settings_error(
+				$this->option_name,
+				'aspireupdate_hosts_error',
+				esc_html__( 'Unable to load API hosts data. Please check the plugin installation.', 'aspireupdate' ),
+				'error'
+			);
+			return;
+		}
+
 		add_settings_section(
 			'aspireupdate_settings_section',
 			esc_html__( 'API Configuration', 'aspireupdate' ),
@@ -467,33 +478,26 @@ class Admin_Settings {
 				'type'      => 'hosts',
 				'data'      => $options,
 				'label_for' => 'aspireupdate-settings-field-api_host',
-				'options'   => [
-					[
-						'value'           => 'https://api.aspirecloud.net',
-						'label'           => sprintf(
+				'options'   => array_map(
+					function ( $host_data ) {
+						$host_data_processed          = [];
+						$host_data_processed['value'] = $host_data['url'] ?? '';
+						$host_data_processed['label'] = sprintf(
 							/* translators: 1: The name of the API Service */
-							__( 'AspireCloud (%1$s)', 'aspireupdate' ),
-							'https://api.aspirecloud.net'
-						),
-						'require-api-key' => 'false',
-						'api-key-url'     => 'https://api.aspirecloud.net/v1/apitoken',
-					],
-					[
-						'value'           => 'https://api.aspirecloud.io',
-						'label'           => sprintf(
-							/* translators: 1: The name of the API Service */
-							__( 'AspireCloud Bleeding Edge (%1$s)', 'aspireupdate' ),
-							'https://api.aspirecloud.io'
-						),
-						'require-api-key' => 'false',
-						'api-key-url'     => 'https://api.aspirecloud.net/v1/apitoken',
-					],
-					[
-						'value'           => 'other',
-						'label'           => esc_html__( 'Other', 'aspireupdate' ),
-						'require-api-key' => 'false',
-					],
-				],
+							__( '%1$s (%2$s)', 'aspireupdate' ),
+							( $host_data['label'] ?? '' ),
+							$host_data['url']
+						);
+						if ( 'other' === $host_data_processed['value'] ) {
+							$host_data_processed['label'] = esc_html__( 'Other', 'aspireupdate' );
+						}
+						$host_data_processed['api-key-url']     = $host_data['api-key-url'] ?? '';
+						$host_data_processed['require-api-key'] = $host_data['require-api-key'] ?? 'false';
+
+						return $host_data_processed;
+					},
+					$hosts_data
+				),
 			]
 		);
 

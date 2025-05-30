@@ -2,7 +2,7 @@
 Contributors: sarah-savage, namithj, asirota
 Donate link: https://github.com/sponsors/aspirepress
 Requires at least: 5.3
-Tested up to: 6.7
+Tested up to: 6.8.1
 Stable tag: 0.9.3
 Requires PHP: 7.4
 License: GPLv2
