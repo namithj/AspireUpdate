@@ -2,7 +2,7 @@
 	{
 		"url": "https://api.wordpress.org",
 		"label": "Wordpress.org",
-		"api_key_required": false
+		"require-api-key": false
 	},
 	{
 		"url": "https://api.aspirecloud.net",
