@@ -5,7 +5,6 @@
  * @package AspireUpdate
  */
 
-
 /**
  * Tests for Utilities::get_hosts_data()
  *
