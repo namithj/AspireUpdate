@@ -33,7 +33,7 @@ class Debug {
 	 *
 	 * @return string The Log file path.
 	 */
-	private static function get_file_path() {
+	public static function get_file_path() {
 		$log_file = get_option( 'ap_log_file_name', false );
 		if ( false === $log_file ) {
 			$log_file = self::generate_log_file_name();
@@ -48,7 +48,7 @@ class Debug {
 	 *
 	 * @return Filesystem_Direct The filesystem object.
 	 */
-	private static function init_filesystem() {
+	public static function init_filesystem() {
 		if ( ! self::$filesystem instanceof Filesystem_Direct ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
