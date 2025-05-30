@@ -44,6 +44,7 @@ The plugin can use the following configuration options in wp-config.php:
 | AP_DEBUG_TYPES                 |                                                                                  an array of debug modes |                     array('string', 'request', 'response') |
 | AP_DISABLE_SSL                 |                                                              Disabled SSL verification for local testing |                                                       true |
 | AP_REMOVE_UI                   | Disables plugin settings user interface and branding, defaults to config parameters set in wp-config.php |                                                      false |
+| AP_BYPASS_CACHE                |                                               Add a cache buster parameter to bypass cache for API calls |                                                      false |
 
 To set AP_COMPATIBILITY use an array to define the constant:
 
