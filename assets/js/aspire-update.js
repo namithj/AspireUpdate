@@ -77,6 +77,8 @@ class ClearLog {
 								previousSibling: ClearLog.clearlog_button.field.parent()
 							}
 						);
+						ClearLog.clearlog_button.hide();
+						ViewLog.viewlog_button.hide();
 					} else {
 						AdminNotice.add(
 							response.data.message || aspireupdate.unexpected_error,

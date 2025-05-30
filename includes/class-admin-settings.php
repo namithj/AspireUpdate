@@ -390,14 +390,19 @@ class Admin_Settings {
 			],
 			network_admin_url( $this->options_base . '?page=aspireupdate-settings' )
 		);
-		$log_file = get_option( 'ap_log_file_name', false );
+
+		$filesystem      = Debug::init_filesystem();
+		$log_file_path   = Debug::get_file_path();
+		$log_file_name   = get_option( 'ap_log_file_name', false );
+		$log_file_exists = $log_file_name && $filesystem->exists( $log_file_path );
 		Utilities::include_file(
 			'page-admin-settings.php',
 			[
-				'options_base' => $this->options_base,
-				'reset_url'    => $reset_url,
-				'option_group' => $this->option_group,
-				'log_url'      => $log_file ? WP_CONTENT_URL . '/' . $log_file : '',
+				'options_base'    => $this->options_base,
+				'reset_url'       => $reset_url,
+				'option_group'    => $this->option_group,
+				'log_file_exists' => $log_file_exists,
+				'log_url'         => $log_file_exists ? WP_CONTENT_URL . '/' . $log_file_name : '',
 			]
 		);
 	}
