@@ -19,7 +19,7 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 	 */
 	public function test_get_hosts_data_returns_array() {
 		$hosts_data = \AspireUpdate\Utilities::get_hosts_data();
-		$this->assertTrue( is_array( $hosts_data ), 'get_hosts_data() should return an array' );
+		$this->assertIsArray( $hosts_data, 'get_hosts_data() should return an array' );
 		$this->assertNotEmpty( $hosts_data, 'get_hosts_data() should not return an empty array' );
 	}
 
