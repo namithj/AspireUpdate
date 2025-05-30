@@ -55,10 +55,10 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		$prop->setAccessible( true );
 		$prop->setValue( null, null );
 		$result = \AspireUpdate\Utilities::get_hosts_data();
-		$this->assertFalse( $result, 'get_hosts_data() should return false if file is missing' );
 		// Restore the file
 		if ( $backup && file_exists( $backup ) ) {
 			$wp_filesystem->move( $backup, $file );
 		}
+		$this->assertFalse( $result, 'get_hosts_data() should return false if file is missing' );
 	}
 }
