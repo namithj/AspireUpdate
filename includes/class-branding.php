@@ -148,7 +148,7 @@ class Branding {
 		$menu_id        = 'aspireupdate-admin-bar-menu';
 
 		$hosts_data = Utilities::get_hosts_data();
-		if ( false === $hosts_data && ! is_array( $hosts_data ) ) {
+		if ( ! is_array( $hosts_data ) ) {
 			return;
 		}
 
