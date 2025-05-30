@@ -14,8 +14,6 @@
 class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 	/**
 	 * Test that an array is returned by get_hosts_data().
-	 *
-	 * @group ms-required
 	 */
 	public function test_get_hosts_data_returns_array() {
 		$hosts_data = \AspireUpdate\Utilities::get_hosts_data();
