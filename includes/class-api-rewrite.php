@@ -231,7 +231,7 @@ class API_Rewrite {
 
 					$parsed_args = $this->add_authorization_header( $parsed_args );
 					$parsed_args = $this->add_accept_json_header( $parsed_args, $url );
-					if ( defined( 'AP_DEBUG_BYPASS_CACHE' ) && AP_DEBUG_BYPASS_CACHE ) {
+					if ( defined( 'AP_BYPASS_CACHE' ) && AP_BYPASS_CACHE ) {
 						$url = $this->add_cache_buster( $url );
 					}
 					$protocol    = wp_parse_url( $url, PHP_URL_SCHEME );
