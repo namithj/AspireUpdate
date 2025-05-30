@@ -25,7 +25,6 @@ class Utilities_GetHostsDataTest extends \WP_UnitTestCase {
 		$prop->setAccessible( false );
 	}
 
-
 	/**
 	 * Test that an array is returned by get_hosts_data().
 	 */
