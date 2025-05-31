@@ -1,5 +1,34 @@
 [unreleased]
 
+#### 0.9.4
+* Admin Settings: WordPress.org has been added as an API host option, and is the new default value.
+* Admin Settings: A new admin bar menu has been added to display the current API host.
+* Admin Settings: Admin notices now replace browser alerts when managing the log.
+* Admin Settings: The "Clear Log" and "View Log" elements are now only visible when a log is known to exist.
+* API Rewrite: A new AP_BYPASS_CACHE constant may be used to add cache busting to API requests.
+* Branding: The branding notice is now permanently dismissible.
+* Accessibility: The link in the branding notice now has more descriptive text.
+* Accessibility: The "Generate API Key" button now has a visual label.
+* Accessibility: The Voltron easter egg now uses a role of "img" with a label.
+* Accessibility: The Voltron easter egg's animation now respects user motion preferences.
+* Accessibility: Field labels and descriptions, and their associations, have been improved.
+* Accessibility: The "View Log" popup has been removed, and the "View Log" button is now a link to the log file.
+* Package: The "Tested up to" plugin header has now been set to WordPress 6.8.1.
+* Package: Hosts data is now stored in a new hosts.json file in the plugin's root directory.
+* Workflows: PHPUnit tests will now run against PHP 8.4.
+* Workflows: End-to-end (E2E) tests now only run when manually triggered.
+
+#### 0.9.3
+* Compatibility: API rewrites now occur on a late hook priority.
+* Compatibility: API rewriting can be optionally skipped if the request already has a response.
+* Documentation: CHANGES.md is now used for the changelog instead of readme.txt.
+* Documentation: The default AP_HOST value in README.md is now api.aspirecloud.net.
+* Package: The dash in "aspire-update" has been removed from the package name.
+* Dependencies: The translations-updater dependency has been updated to 1.2.1.
+
+#### 0.9.2
+* Package: The plugin's version has been updated.
+
 #### 0.9.1
 * First 0.9.x release because 0.9 was not properly versioned and tagged.
 
