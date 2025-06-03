@@ -2,21 +2,21 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: AspireUpdate 0.9.3\n"
+"Project-Id-Version: AspireUpdate 0.9.4\n"
 "Report-Msgid-Bugs-To: https://github.com/aspirepress/aspireupdate/issues\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-29T09:09:03+00:00\n"
+"POT-Creation-Date: 2025-05-31T02:57:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: aspireupdate\n"
 
 #. Plugin Name of the plugin
 #: aspire-update.php
-#: includes/class-branding.php:150
+#: includes/class-branding.php:160
 msgid "AspireUpdate"
 msgstr ""
 
@@ -63,95 +63,93 @@ msgstr ""
 msgid "Please enter a valid URL"
 msgstr ""
 
-#: includes/class-admin-settings.php:429
+#: includes/class-admin-settings.php:439
+msgid "Unable to load API hosts data. Please check the plugin installation."
+msgstr ""
+
+#: includes/class-admin-settings.php:447
 msgid "API Configuration"
 msgstr ""
 
-#: includes/class-admin-settings.php:440
+#: includes/class-admin-settings.php:458
 msgid "API Rewriting"
 msgstr ""
 
-#: includes/class-admin-settings.php:448
+#: includes/class-admin-settings.php:466
 msgid "Rewrite API requests"
 msgstr ""
 
-#: includes/class-admin-settings.php:454
+#: includes/class-admin-settings.php:472
 msgid "API Host"
 msgstr ""
 
 #. translators: 1: The name of the API Service
-#: includes/class-admin-settings.php:468
+#: includes/class-admin-settings.php:487
 #, php-format
-msgid "AspireCloud (%1$s)"
+msgid "%1$s (%2$s)"
 msgstr ""
 
-#. translators: 1: The name of the API Service
-#: includes/class-admin-settings.php:478
-#, php-format
-msgid "AspireCloud Bleeding Edge (%1$s)"
-msgstr ""
-
-#: includes/class-admin-settings.php:486
+#: includes/class-admin-settings.php:492
 msgid "Other"
 msgstr ""
 
-#: includes/class-admin-settings.php:495
+#: includes/class-admin-settings.php:506
 msgid "API Key"
 msgstr ""
 
-#: includes/class-admin-settings.php:503
+#: includes/class-admin-settings.php:514
 msgid "Some repositories may require an API key for authentication."
 msgstr ""
 
-#: includes/class-admin-settings.php:510
+#: includes/class-admin-settings.php:521
 msgid "Compatibility"
 msgstr ""
 
-#: includes/class-admin-settings.php:519
+#: includes/class-admin-settings.php:530
 msgid "Skip API rewriting if another plugin already appears to be rewriting API requests"
 msgstr ""
 
-#: includes/class-admin-settings.php:526
+#: includes/class-admin-settings.php:537
 msgid "API Debug Configuration"
 msgstr ""
 
-#: includes/class-admin-settings.php:537
+#: includes/class-admin-settings.php:548
 msgid "Debug Mode"
 msgstr ""
 
-#: includes/class-admin-settings.php:545
+#: includes/class-admin-settings.php:556
 msgid "Enable logging and other debugging functionality"
 msgstr ""
 
-#: includes/class-admin-settings.php:551
+#: includes/class-admin-settings.php:562
 msgid "Log Contents"
 msgstr ""
 
-#: includes/class-admin-settings.php:560
+#: includes/class-admin-settings.php:571
 msgid "Include request arguments"
 msgstr ""
 
-#: includes/class-admin-settings.php:561
+#: includes/class-admin-settings.php:572
 msgid "Include response headers and body"
 msgstr ""
 
-#: includes/class-admin-settings.php:562
+#: includes/class-admin-settings.php:573
 msgid "Include a simple description of each step in the rewriting process"
 msgstr ""
 
-#: includes/class-admin-settings.php:569
+#: includes/class-admin-settings.php:580
 msgid "SSL Verification"
 msgstr ""
 
-#: includes/class-admin-settings.php:578
+#: includes/class-admin-settings.php:589
 msgid "Disable SSL verification to allow for local testing"
 msgstr ""
 
-#: includes/class-admin-settings.php:687
+#: includes/class-admin-settings.php:698
 msgid "Generate API Key"
 msgstr ""
 
-#: includes/class-admin-settings.php:718
+#: includes/class-admin-settings.php:729
 msgid "Enter a custom API host. Ensure that it starts with https://."
 msgstr ""
 
@@ -183,7 +181,7 @@ msgstr ""
 
 #. translators: %s: The error message.
 #: includes/class-api-rewrite.php:219
-#: includes/class-api-rewrite.php:294
+#: includes/class-api-rewrite.php:296
 #, php-format
 msgid "Request Failed: %s"
 msgstr ""
@@ -192,34 +190,34 @@ msgstr ""
 msgid "SSL Verification Disabled"
 msgstr ""
 
-#: includes/class-api-rewrite.php:241
+#: includes/class-api-rewrite.php:243
 msgid "API Rerouted to: "
 msgstr ""
 
 #. translators: %s: The asset type.
-#: includes/class-api-rewrite.php:265
+#: includes/class-api-rewrite.php:267
 #, php-format
 msgid "Removed non-API %s from the update request."
 msgstr ""
 
-#: includes/class-api-rewrite.php:266
-#: includes/class-api-rewrite.php:324
+#: includes/class-api-rewrite.php:268
+#: includes/class-api-rewrite.php:326
 msgid "plugins"
 msgstr ""
 
-#: includes/class-api-rewrite.php:266
-#: includes/class-api-rewrite.php:324
+#: includes/class-api-rewrite.php:268
+#: includes/class-api-rewrite.php:326
 msgid "themes"
 msgstr ""
 
 #. translators: %s: The asset type.
-#: includes/class-api-rewrite.php:323
+#: includes/class-api-rewrite.php:325
 #, php-format
 msgid "Removed non-API %s from the update response."
 msgstr ""
 
 #. translators: %s: AspireUpdate.
-#: includes/class-api-rewrite.php:343
+#: includes/class-api-rewrite.php:345
 #, php-format
 msgid "Removed %s from the response."
 msgstr ""
@@ -243,13 +241,13 @@ msgid "Your WordPress, plugin, theme and translation updates are now powered by 
 msgstr ""
 
 #. translators: 1: The API host's name.
-#: includes/class-branding.php:155
+#: includes/class-branding.php:165
 #, php-format
 msgid "API host: %1$s"
 msgstr ""
 
-#: includes/class-branding.php:185
-#: includes/views/page-admin-settings.php:9
+#: includes/class-branding.php:197
+#: includes/views/page-admin-settings.php:11
 msgid "AspireUpdate Settings"
 msgstr ""
 
@@ -274,14 +272,26 @@ msgstr ""
 msgid "Error: Unable to access the log file."
 msgstr ""
 
-#: includes/views/page-admin-settings.php:18
-msgid "Reset"
+#: includes/class-utilities.php:67
+msgid "Config file is missing or unreadable."
 msgstr ""
 
-#: includes/views/page-admin-settings.php:19
-msgid "Clear Log"
+#: includes/class-utilities.php:73
+msgid "Config file is empty."
+msgstr ""
+
+#: includes/class-utilities.php:79
+msgid "Error found in config file content."
 msgstr ""
 
 #: includes/views/page-admin-settings.php:20
+msgid "Reset"
+msgstr ""
+
+#: includes/views/page-admin-settings.php:22
+msgid "Clear Log"
+msgstr ""
+
+#: includes/views/page-admin-settings.php:25
 msgid "View Log"
 msgstr ""

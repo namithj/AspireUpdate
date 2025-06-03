@@ -137,10 +137,20 @@ class Branding {
 			return;
 		}
 
+		$capability = is_multisite() ? 'manage_network' : 'manage_options';
+		if ( ! current_user_can( $capability ) ) {
+			return;
+		}
+
 		$admin_settings = Admin_Settings::get_instance();
 		$options_base   = is_multisite() ? 'settings.php' : 'options-general.php';
 		$settings_page  = network_admin_url( $options_base . '?page=aspireupdate-settings' );
 		$menu_id        = 'aspireupdate-admin-bar-menu';
+
+		$hosts_data = Utilities::get_hosts_data();
+		if ( ! is_array( $hosts_data ) ) {
+			return;
+		}
 
 		$wp_admin_bar->add_menu(
 			[
@@ -154,37 +164,38 @@ class Branding {
 		/* translators: 1: The API host's name. */
 		$status_message = __( 'API host: %1$s', 'aspireupdate' );
 		$api_host       = $admin_settings->get_setting( 'api_host' );
-		switch ( $api_host ) {
-			case 'https://api.aspirecloud.net':
-				$api_host_name = 'AspireCloud';
-				break;
-			case 'https://api.aspirecloud.io':
-				$api_host_name = 'AspireCloud Bleeding Edge';
-				break;
-			default:
-				$api_host_name = $api_host;
-				break;
+
+		$selected_host_data = array_filter(
+			$hosts_data,
+			function ( $host_data ) use ( $api_host ) {
+				return isset( $host_data['url'] ) && $host_data['url'] === $api_host;
+			}
+		);
+		if ( is_array( $selected_host_data ) && ! empty( $selected_host_data ) ) {
+			$selected_host_data = reset( $selected_host_data );
+		} else {
+			$selected_host_data = [
+				'label' => $api_host,
+				'url'   => $api_host,
+			];
 		}
 
 		$wp_admin_bar->add_menu(
 			[
 				'id'     => 'aspireupdate-admin-bar-menu-status',
 				'parent' => $menu_id,
-				'href'   => false,
-				'title'  => sprintf( $status_message, $api_host_name ),
+				'href'   => $settings_page . '#aspireupdate-settings-field-api_host',
+				'title'  => sprintf( $status_message, $selected_host_data['label'] ),
 			]
 		);
 
-		$capability = is_multisite() ? 'manage_network' : 'manage_options';
-		if ( current_user_can( $capability ) ) {
-			$wp_admin_bar->add_menu(
-				[
-					'id'     => 'aspireupdate-admin-bar-menu-settings',
-					'parent' => $menu_id,
-					'href'   => $settings_page,
-					'title'  => __( 'AspireUpdate Settings', 'aspireupdate' ),
-				]
-			);
-		}
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => 'aspireupdate-admin-bar-menu-settings',
+				'parent' => $menu_id,
+				'href'   => $settings_page,
+				'title'  => __( 'AspireUpdate Settings', 'aspireupdate' ),
+			]
+		);
 	}
 }

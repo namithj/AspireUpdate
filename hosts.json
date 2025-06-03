@@ -1,0 +1,22 @@
+[
+	{
+		"url": "https://api.wordpress.org",
+		"label": "WordPress.org",
+		"require-api-key": false
+	},
+	{
+		"url": "https://api.aspirecloud.net",
+		"label": "AspireCloud",
+		"require-api-key": false
+	},
+	{
+		"url": "https://api.aspirecloud.io",
+		"label": "AspireCloud Bleeding Edge",
+		"require-api-key": false
+	},
+	{
+		"url": "other",
+		"label": "Other",
+		"require-api-key": false
+	}
+]
