@@ -186,15 +186,11 @@ class Branding_AddAdminBarMenuTest extends WP_UnitTestCase {
 	 */
 	public function data_api_hosts_and_expected_names() {
 		return [
-			'AspireCloud'               => [
+			'AspireCloud' => [
 				'api_host'      => 'https://api.aspirecloud.net',
 				'expected_name' => 'AspireCloud',
 			],
-			'AspireCloud Bleeding Edge' => [
-				'api_host'      => 'https://api.aspirecloud.io',
-				'expected_name' => 'AspireCloud Bleeding Edge',
-			],
-			'Other'                     => [
+			'Other'       => [
 				'api_host'      => 'https://my.api.org',
 				'expected_name' => 'https://my.api.org',
 			],

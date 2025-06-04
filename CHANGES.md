@@ -1,5 +1,8 @@
 [unreleased]
 
+#### 1.0
+* Removed the Aspire Cloud Bleeding Edge Endpoint from Hosts List.
+
 #### 0.9.4
 * Admin Settings: WordPress.org has been added as an API host option, and is the new default value.
 * Admin Settings: A new admin bar menu has been added to display the current API host.
