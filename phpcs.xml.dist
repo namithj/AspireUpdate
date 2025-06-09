@@ -45,6 +45,9 @@
 	<!-- Translation files. -->
 	<exclude-pattern>/languages/*</exclude-pattern>
 
+	<!-- Exclude bump-version.php from all sniffs. -->
+	<exclude-pattern>bump-version.php</exclude-pattern>
+
 	<!--
 	#############################################################################
 	SET UP THE RULESET
