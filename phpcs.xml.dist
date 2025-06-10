@@ -46,7 +46,7 @@
 	<exclude-pattern>/languages/*</exclude-pattern>
 
 	<!-- Exclude executable and script files from all sniffs. -->
-	<exclude-pattern>/bbin/*</exclude-pattern>
+	<exclude-pattern>/bin/*</exclude-pattern>
 
 	<!--
 	#############################################################################
