@@ -46,6 +46,7 @@ class BumpVersion {
 		//$this->update_composer();
 		$this->update_package();
 		$this->update_files();
+		$this->update_potfiles();
 		$this->print_footer();
 	}
 
@@ -84,7 +85,7 @@ class BumpVersion {
 	 * @return void
 	 */
 	private function update_composer() {
-		$composer_path = __DIR__ . '/composer.json';
+		$composer_path = __DIR__ . '/../composer.json';
 		if ( ! file_exists( $composer_path ) ) {
 			$this->print_message( 'composer.json not found' );
 			return;
@@ -104,7 +105,7 @@ class BumpVersion {
 	 * @return void
 	 */
 	private function update_package() {
-		$package_path = __DIR__ . '/package.json';
+		$package_path = __DIR__ . '/../package.json';
 		if ( ! file_exists( $package_path ) ) {
 			$this->print_message( 'package.json not found' );
 			return;
@@ -116,6 +117,24 @@ class BumpVersion {
 			file_put_contents( $package_path, json_encode( $package, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) . PHP_EOL );
 		}
 		$this->print_message( 'Updated version in package.json' );
+
+		if ( ! $this->dry_run ) {
+			$this->print_message( 'Running npm install...' );
+			chdir( dirname( $package_path ) );
+			$npm_output = [];
+			$npm_status = 0;
+			exec( 'npm install 2>&1', $npm_output, $npm_status );
+			$this->print_message( 'npm install output:' );
+			foreach ( $npm_output as $line ) {
+				$this->print_message( $line );
+			}
+			if ( $npm_status === 0 ) {
+				$this->print_message( 'npm install completed successfully.' );
+			} else {
+				$this->print_message( 'npm install failed.' );
+				$this->print_message( 'Please run "npm i" manually to update package-lock.json.' );
+			}
+		}
 	}
 
 	/**
@@ -126,21 +145,32 @@ class BumpVersion {
 	private function update_files() {
 		$files = [
 			[
-				'path'     => __DIR__ . '/aspire-update.php',
+				'path'     => __DIR__ . '/../aspire-update.php',
 				'patterns' => [
-					'/(^Version:\s*)([\d\.]+)/mi' => function ( $matches ) {
-						return $matches[1] . $this->version; },
-					'/(\$version\s*=\s*[\'"])([\d\.]+)([\'"])/i' => function ( $matches ) {
-						return $matches[1] . $this->version . $matches[3]; },
+					'/(^[ \t\/*#@]*Version:\s*)([\d\.]+)/mi' => function ( $matches ) {
+						return $matches[1] . $this->version;
+					},
 					'/define\(\s*\'AP_VERSION\'\s*,\s*\'([\d\.]+)\'\s*\)\s*;/i' => function ( $matches ) {
 						return str_replace( $matches[1], $this->version, $matches[0] ); },
 				],
 			],
 			[
-				'path'     => __DIR__ . '/readme.txt',
+				'path'     => __DIR__ . '/../readme.txt',
 				'patterns' => [
 					'/(^Stable tag:\s*)([\d\.]+)/mi' => function ( $matches ) {
 						return $matches[1] . $this->version; },
+				],
+			],
+			[
+				'path'     => __DIR__ . '/../.github/ISSUE_TEMPLATE/BugReport.yml',
+				'patterns' => [
+					'/\-\s*\d+\.\d+\.\d+\s*\(Latest\)/' => '- ' . $this->version . ' (Latest)',
+				],
+			],
+			[
+				'path'     => __DIR__ . '/../assets/playground/blueprint.json',
+				'patterns' => [
+					'/https:\/\/github-proxy\.com\/proxy\/\?repo=AspirePress\/AspireUpdate&release=\d+\.\d+\.\d+/' => 'https://github-proxy.com/proxy/?repo=AspirePress/AspireUpdate&release=' . $this->version,
 				],
 			],
 		];
@@ -170,6 +200,55 @@ class BumpVersion {
 					file_put_contents( $file_path, $modified );
 				}
 				$this->print_message( "Updated version in: $file_path" );
+			}
+		}
+	}
+
+	/**
+	 * Update the POT files.
+	 *
+	 * @return void
+	 */
+	private function update_potfiles() {
+		$potfiles = [
+			__DIR__ . '/../languages/aspireupdate.pot',
+		];
+
+		foreach ( $potfiles as $potfile ) {
+			if ( ! file_exists( $potfile ) ) {
+				$this->print_message( "POT file not found: $potfile" );
+				continue;
+			}
+
+			if ( ! $this->dry_run ) {
+				$this->print_message( "Updating POT file: $potfile" );
+				$this->print_message( 'Running wp i18n make-pot for: ' . $potfile );
+
+				$is_windows   = strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN';
+				$headers_json = json_encode(
+					[
+						'Report-Msgid-Bugs-To' => 'https://github.com/aspirepress/aspireupdate/issues',
+					],
+					JSON_UNESCAPED_SLASHES
+				);
+				if ( $is_windows ) {
+					$headers_arg = '"' . str_replace( '"', '\"', $headers_json ) . '"';
+					$cmd         = '.\\vendor\\wp-cli\\wp-cli\\bin\\wp i18n make-pot . languages/aspireupdate.pot --headers=' . $headers_arg;
+				} else {
+					$cmd = './vendor/wp-cli/wp-cli/bin/wp i18n make-pot . ./languages/aspireupdate.pot --headers=' . escapeshellarg( $headers_json );
+				}
+				$pot_output = [];
+				$pot_status = 0;
+				exec( $cmd . ' 2>&1', $pot_output, $pot_status );
+				foreach ( $pot_output as $line ) {
+					$this->print_message( $line );
+				}
+				if ( $pot_status === 0 ) {
+					$this->print_message( 'POT file updated successfully: ' . $potfile );
+				} else {
+					$this->print_message( 'Failed to update POT file: ' . $potfile );
+					$this->print_message( 'Please run "' . $cmd . '" manually to update pot file.' );
+				}
 			}
 		}
 	}

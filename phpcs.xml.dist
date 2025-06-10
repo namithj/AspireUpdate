@@ -45,8 +45,8 @@
 	<!-- Translation files. -->
 	<exclude-pattern>/languages/*</exclude-pattern>
 
-	<!-- Exclude bump-version.php from all sniffs. -->
-	<exclude-pattern>bump-version.php</exclude-pattern>
+	<!-- Exclude executable and script files from all sniffs. -->
+	<exclude-pattern>/bbin/*</exclude-pattern>
 
 	<!--
 	#############################################################################

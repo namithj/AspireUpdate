@@ -18,4 +18,3 @@ phpcs.xml.dist export-ignore
 /bin export-ignore
 /tests export-ignore
 /.cache export-ignore
-bump-version.php export-ignore
