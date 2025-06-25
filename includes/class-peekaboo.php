@@ -68,6 +68,27 @@ class Peekaboo {
 	}
 
 	/**
+	 * This method hooks into WordPress filters to disable XML-RPC functionality.
+	 */
+	public function disable_xmlrpc() {
+		/**
+		 * Disable XML-RPC to prevent remote calls to WordPress API Host Server.
+		 */
+		add_filter( 'xmlrpc_enabled', '__return_false' );
+
+		/**
+		 * Disable the XML-RPC pingback method.
+		 */
+		add_filter(
+			'xmlrpc_methods',
+			function () {
+				return [];
+			},
+			PHP_INT_MAX
+		);
+	}
+
+	/**
 	 * This method hooks into WordPress filters to disable remote core version checks
 	 * and prevent unnecessary calls to WordPress API Host Server.
 	 */

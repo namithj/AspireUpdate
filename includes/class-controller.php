@@ -69,6 +69,10 @@ class Controller {
 			$peekaboo->disable_oembed_rest_discovery();
 		}
 
+		if ( $admin_settings->get_setting( 'disable_privacy_xmlrpc', false ) ) {
+			$peekaboo->disable_xmlrpc();
+		}
+
 		if ( $admin_settings->get_setting( 'disable_privacy_remote_core_update_check', false ) ) {
 			$peekaboo->disable_remote_core_version_check();
 		}
