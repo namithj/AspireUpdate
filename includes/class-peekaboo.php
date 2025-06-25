@@ -1,6 +1,6 @@
 <?php
 /**
- * The Class for Managing Several Instances of unwanted Callbacks Home.
+ * The Class for Managing Several Instances of potentially unwanted Callbacks Home.
  *
  * @package aspire-update
  */
@@ -51,17 +51,34 @@ class Peekaboo {
 	}
 
 	/**
+	 * This method hooks into WordPress actions to disable the oEmbed discovery endpoint.
+	 */
+	public function disable_oembed_rest_discovery() {
+		/**
+		 * Disable the oEmbed discovery endpoint.
+		 */
+		remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+
+		/**
+		 * Disable the oEmbed discovery links in the head.
+		 */
+		remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+		remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+		remove_action( 'wp_head', 'wp_maybe_enqueue_oembed_host_js' );
+	}
+
+	/**
 	 * This method hooks into WordPress filters to disable remote core version checks
 	 * and prevent unnecessary calls to WordPress API Host Server.
 	 */
 	public function disable_remote_core_version_check() {
 		/**
-		 * Disable the core version check to prevent remote calls to WordPress.org.
+		 * Disable the core version check to prevent remote calls to WordPress API Host Server.
 		 */
 		add_filter( 'pre_site_transient_update_core', '__return_null' );
 
 		/**
-		 * Disable the core update check to prevent remote calls to WordPress.org.
+		 * Disable the core update check to prevent remote calls to WordPress API Host Server.
 		 */
 		remove_action( 'init', 'wp_version_check' );
 

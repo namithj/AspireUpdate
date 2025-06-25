@@ -632,6 +632,21 @@ class Admin_Settings {
 		);
 
 		add_settings_field(
+			'disable_privacy_oembed_discovery',
+			esc_html__( 'oEmbed and REST discovery', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_oembed_discovery',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Disable oEmbed and REST discovery', 'aspireupdate' ),
+			]
+		);
+
+		add_settings_field(
 			'disable_privacy_remote_core_update_check',
 			esc_html__( 'Core Update Checks', 'aspireupdate' ),
 			[ $this, 'add_settings_field_callback' ],
@@ -867,6 +882,7 @@ class Admin_Settings {
 
 		$sanitized_input['disable_privacy_remote_avatar_services']     = (int) ! empty( $input['disable_privacy_remote_avatar_services'] );
 		$sanitized_input['disable_privacy_dashboard_news_widget']      = (int) ! empty( $input['disable_privacy_dashboard_news_widget'] );
+		$sanitized_input['disable_privacy_oembed_discovery']           = (int) ! empty( $input['disable_privacy_oembed_discovery'] );
 		$sanitized_input['disable_privacy_remote_core_update_check']   = (int) ! empty( $input['disable_privacy_remote_core_update_check'] );
 		$sanitized_input['disable_privacy_remote_plugin_update_check'] = (int) ! empty( $input['disable_privacy_remote_plugin_update_check'] );
 		$sanitized_input['disable_privacy_remote_theme_update_check']  = (int) ! empty( $input['disable_privacy_remote_theme_update_check'] );

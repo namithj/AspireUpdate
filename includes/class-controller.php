@@ -65,6 +65,10 @@ class Controller {
 			$peekaboo->disable_dashboard_news_events_widget();
 		}
 
+		if ( $admin_settings->get_setting( 'disable_privacy_oembed_discovery', false ) ) {
+			$peekaboo->disable_oembed_rest_discovery();
+		}
+
 		if ( $admin_settings->get_setting( 'disable_privacy_remote_core_update_check', false ) ) {
 			$peekaboo->disable_remote_core_version_check();
 		}
