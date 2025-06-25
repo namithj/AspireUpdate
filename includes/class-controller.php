@@ -20,6 +20,7 @@ class Controller {
 		Themes_Screens::get_instance();
 		Branding::get_instance();
 		$this->api_rewrite();
+		add_action( 'init', [ $this, 'privacy_options' ] );
 		add_action( 'wp_ajax_aspireupdate_clear_log', [ $this, 'clear_log' ] );
 		add_action( 'wp_ajax_aspireupdate_read_log', [ $this, 'read_log' ] );
 	}
@@ -49,6 +50,31 @@ class Controller {
 			} else {
 				new API_Rewrite( $api_host, false, $api_key );
 			}
+		}
+	}
+
+	public function privacy_options() {
+		$admin_settings = Admin_Settings::get_instance();
+		$peekaboo       = Peekaboo::get_instance();
+
+		if ( $admin_settings->get_setting( 'disable_privacy_remote_avatar_services', false ) ) {
+			$peekaboo->disable_remote_avatar_services();
+		}
+
+		if ( $admin_settings->get_setting( 'disable_privacy_dashboard_news_widget', false ) ) {
+			$peekaboo->disable_dashboard_news_events_widget();
+		}
+
+		if ( $admin_settings->get_setting( 'disable_privacy_remote_core_update_check', false ) ) {
+			$peekaboo->disable_remote_core_version_check();
+		}
+
+		if ( $admin_settings->get_setting( 'disable_privacy_remote_plugin_update_check', false ) ) {
+			$peekaboo->disable_remote_plugin_update_check();
+		}
+
+		if ( $admin_settings->get_setting( 'disable_privacy_remote_theme_update_check', false ) ) {
+			$peekaboo->disable_remote_theme_update_check();
 		}
 	}
 

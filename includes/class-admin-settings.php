@@ -589,6 +589,92 @@ class Admin_Settings {
 				'label' => esc_html__( 'Disable SSL verification to allow for local testing', 'aspireupdate' ),
 			]
 		);
+
+		add_settings_section(
+			'aspireupdate_privacy_settings_section',
+			esc_html__( 'Configuration options related to Privacy and Performance', 'aspireupdate' ),
+			null,
+			'aspireupdate-settings',
+			[
+				'before_section' => '<div class="%s">',
+				'after_section'  => '</div>',
+			]
+		);
+
+		add_settings_field(
+			'disable_privacy_remote_avatar_services',
+			esc_html__( 'Avatar Services', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_remote_avatar_services',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Disables remote avatar fetching (e.g. Gravatar) and replaces it with a local avatar image.', 'aspireupdate' ),
+			]
+		);
+
+		add_settings_field(
+			'disable_privacy_dashboard_news_widget',
+			esc_html__( 'News and Events Widget', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_dashboard_news_widget',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Remove dashboard news widget that fetches from planet.wordpress.org', 'aspireupdate' ),
+			]
+		);
+
+		add_settings_field(
+			'disable_privacy_remote_core_update_check',
+			esc_html__( 'Core Update Checks', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_remote_core_update_check',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Disables the Checks of WordPress version updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
+			]
+		);
+
+		add_settings_field(
+			'disable_privacy_remote_plugin_update_check',
+			esc_html__( 'Plugin Update Checks', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_remote_plugin_update_check',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Disables the Checks for plugin updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
+			]
+		);
+
+		add_settings_field(
+			'disable_privacy_remote_theme_update_check',
+			esc_html__( 'Theme Update Checks', 'aspireupdate' ),
+			[ $this, 'add_settings_field_callback' ],
+			'aspireupdate-settings',
+			'aspireupdate_privacy_settings_section',
+			[
+				'id'    => 'disable_privacy_remote_theme_update_check',
+				'type'  => 'checkbox',
+				'data'  => $options,
+				'class' => 'advanced-setting',
+				'label' => esc_html__( 'Disables the Checks for theme updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
+			]
+		);
 	}
 
 	/**
@@ -778,6 +864,12 @@ class Admin_Settings {
 			$sanitized_input['enable_debug_type'] = [];
 		}
 		$sanitized_input['disable_ssl_verification'] = (int) ! empty( $input['disable_ssl_verification'] );
+
+		$sanitized_input['disable_privacy_remote_avatar_services']     = (int) ! empty( $input['disable_privacy_remote_avatar_services'] );
+		$sanitized_input['disable_privacy_dashboard_news_widget']      = (int) ! empty( $input['disable_privacy_dashboard_news_widget'] );
+		$sanitized_input['disable_privacy_remote_core_update_check']   = (int) ! empty( $input['disable_privacy_remote_core_update_check'] );
+		$sanitized_input['disable_privacy_remote_plugin_update_check'] = (int) ! empty( $input['disable_privacy_remote_plugin_update_check'] );
+		$sanitized_input['disable_privacy_remote_theme_update_check']  = (int) ! empty( $input['disable_privacy_remote_theme_update_check'] );
 
 		return $sanitized_input;
 	}
