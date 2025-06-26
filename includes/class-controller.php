@@ -73,16 +73,44 @@ class Controller {
 			$peekaboo->disable_xmlrpc();
 		}
 
-		if ( $admin_settings->get_setting( 'disable_privacy_remote_core_update_check', false ) ) {
+		$update_checks = $admin_settings->get_setting( 'disable_privacy_remote_update_check' );
+		if ( ! empty( $update_checks['core'] ) ) {
 			$peekaboo->disable_remote_core_version_check();
 		}
-
-		if ( $admin_settings->get_setting( 'disable_privacy_remote_plugin_update_check', false ) ) {
+		if ( ! empty( $update_checks['plugins'] ) ) {
 			$peekaboo->disable_remote_plugin_update_check();
 		}
-
-		if ( $admin_settings->get_setting( 'disable_privacy_remote_theme_update_check', false ) ) {
+		if ( ! empty( $update_checks['themes'] ) ) {
 			$peekaboo->disable_remote_theme_update_check();
+		}
+
+		$automatic_updates = $admin_settings->get_setting( 'disable_privacy_auto_updates' );
+		if ( ! empty( $automatic_updates['core'] ) ) {
+			$peekaboo->disable_automatic_updates( 'core' );
+		}
+		if ( ! empty( $automatic_updates['plugins'] ) ) {
+			$peekaboo->disable_automatic_updates( 'plugins' );
+		}
+		if ( ! empty( $automatic_updates['themes'] ) ) {
+			$peekaboo->disable_automatic_updates( 'themes' );
+		}
+		if (
+			! empty( $automatic_updates['plugins'] ) &&
+			! empty( $automatic_updates['themes'] ) &&
+			! empty( $automatic_updates['core'] )
+		) {
+			$peekaboo->disable_automatic_updates( 'all' );
+		}
+
+		$woo_settings = $admin_settings->get_setting( 'disable_privacy_woocommerce' );
+		if ( ! empty( $woo_settings['telemetry'] ) ) {
+			$peekaboo->disable_woocommerce_callbacks( 'telemetry' );
+		}
+		if ( ! empty( $woo_settings['marketplace_extensions'] ) ) {
+			$peekaboo->disable_woocommerce_callbacks( 'marketplace_extensions' );
+		}
+		if ( ! empty( $woo_settings['scheduled_tasks'] ) ) {
+			$peekaboo->disable_woocommerce_callbacks( 'scheduled_tasks' );
 		}
 	}
 

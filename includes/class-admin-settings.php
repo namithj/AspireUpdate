@@ -20,6 +20,13 @@ class Admin_Settings {
 	private static $instance = null;
 
 	/**
+	 * The fields data.
+	 *
+	 * @var array
+	 */
+	private $fields_data = null;
+
+	/**
 	 * The Name of the Option Group.
 	 *
 	 * @var string
@@ -408,6 +415,45 @@ class Admin_Settings {
 	}
 
 	/**
+	 * Get the fields data from the JSON file.
+	 *
+	 * @return array|false The fields data as an associative array, or false on failure.
+	 */
+	private function get_fields_data() {
+		if ( null !== $this->fields_data ) {
+			return $this->fields_data;
+		}
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$file_path = AP_PATH . DIRECTORY_SEPARATOR . 'fields.json';
+
+		if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
+			Debug::log_string( __( 'Fields data is missing or unreadable.', 'aspireupdate' ) );
+			return false;
+		}
+
+		$json_data = $wp_filesystem->get_contents( $file_path );
+		if ( false === $json_data ) {
+			Debug::log_string( __( 'Fields data is empty.', 'aspireupdate' ) );
+			return false;
+		}
+
+		$json_data = json_decode( $json_data, true );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			Debug::log_string( __( 'Error found in Fields data content.', 'aspireupdate' ) );
+			return false;
+		}
+
+		$this->fields_data = $json_data;
+		return $json_data;
+	}
+
+	/**
 	 * Register all Settings.
 	 *
 	 * @return void
@@ -442,269 +488,91 @@ class Admin_Settings {
 			return;
 		}
 
-		add_settings_section(
-			'aspireupdate_settings_section',
-			esc_html__( 'API Configuration', 'aspireupdate' ),
-			null,
-			'aspireupdate-settings',
-			[
-				'before_section' => '<div class="%s">',
-				'after_section'  => '</div>',
-			]
-		);
+		$fields_data = $this->get_fields_data();
+		if ( ! is_array( $fields_data ) ) {
+			add_settings_error(
+				$this->option_name,
+				'aspireupdate_fields_error',
+				esc_html__( 'Unable to load settings fields data. Please check the plugin installation.', 'aspireupdate' ),
+				'error'
+			);
+			return;
+		}
 
-		add_settings_field(
-			'enable',
-			esc_html__( 'API Rewriting', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_settings_section',
-			[
-				'id'    => 'enable',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'label' => esc_html__( 'Rewrite API requests', 'aspireupdate' ),
-			]
-		);
+		foreach ( $fields_data as $field ) {
+			if ( ! isset( $field['id'] ) || ! isset( $field['type'] ) || ! isset( $field['title'] ) ) {
+				continue;
+			}
 
-		add_settings_field(
-			'api_host',
-			esc_html__( 'API Host', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_settings_section',
-			[
-				'id'        => 'api_host',
-				'type'      => 'hosts',
-				'data'      => $options,
-				'label_for' => 'aspireupdate-settings-field-api_host',
-				'options'   => array_map(
-					function ( $host_data ) {
-						$host_data_processed          = [];
-						$host_data_processed['value'] = $host_data['url'] ?? '';
-						$host_data_processed['label'] = sprintf(
-							/* translators: 1: The name of the API Service */
-							__( '%1$s (%2$s)', 'aspireupdate' ),
-							( $host_data['label'] ?? '' ),
-							$host_data['url']
-						);
-						if ( 'other' === $host_data_processed['value'] ) {
-							$host_data_processed['label'] = esc_html__( 'Other', 'aspireupdate' );
-						}
-						$host_data_processed['api-key-url']     = $host_data['api-key-url'] ?? '';
-						$host_data_processed['require-api-key'] = $host_data['require-api-key'] ?? 'false';
+			if ( 'section' === $field['type'] ) {
+				add_settings_section(
+					$field['id'],
+					esc_html( $field['title'] ),
+					null,
+					'aspireupdate-settings',
+					[
+						'before_section' => '<div class="%s">',
+						'after_section'  => '</div>',
+					]
+				);
+			} else {
+				$args = [
+					'id'   => $field['id'],
+					'type' => $field['type'],
+					'data' => $options,
+				];
+				if ( isset( $field['label'] ) && ( '' !== $field['label'] ) ) {
+					$args['label'] = $field['label'];
+				}
+				if ( isset( $field['label-for'] ) && ( true === $field['label-for'] ) ) {
+					$args['label_for'] = 'aspireupdate-settings-field-' . $field['id'];
+				}
+				if ( isset( $field['description'] ) && ( '' !== $field['description'] ) ) {
+					$args['description'] = $field['description'];
+				}
+				if ( isset( $field['class'] ) && ( '' !== $field['class'] ) ) {
+					$args['class'] = $field['class'];
+				}
+				if ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
+					$field_options = [];
+					foreach ( $field['options'] as $key => $value ) {
+						$field_options[ $key ] = $value;
+					}
+					$args['options'] = $field_options;
+				}
+				if ( 'hosts' === $field['type'] ) {
+					$args['options'] = array_map(
+						function ( $host_data ) {
+							$host_data_processed          = [];
+							$host_data_processed['value'] = $host_data['url'] ?? '';
+							$host_data_processed['label'] = sprintf(
+								/* translators: 1: The name of the API Service */
+								__( '%1$s (%2$s)', 'aspireupdate' ),
+								( $host_data['label'] ?? '' ),
+								$host_data['url']
+							);
+							if ( 'other' === $host_data_processed['value'] ) {
+								$host_data_processed['label'] = esc_html__( 'Other', 'aspireupdate' );
+							}
+							$host_data_processed['api-key-url']     = $host_data['api-key-url'] ?? '';
+							$host_data_processed['require-api-key'] = $host_data['require-api-key'] ?? 'false';
 
-						return $host_data_processed;
-					},
-					$hosts_data
-				),
-			]
-		);
+							return $host_data_processed;
+						},
+						$hosts_data
+					);
+				}
 
-		add_settings_field(
-			'api_key',
-			esc_html__( 'API Key', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_settings_section',
-			[
-				'id'          => 'api_key',
-				'type'        => 'api-key',
-				'data'        => $options,
-				'description' => esc_html__( 'Some repositories may require an API key for authentication.', 'aspireupdate' ),
-				'label_for'   => 'aspireupdate-settings-field-api_key',
-			]
-		);
-
-		add_settings_field(
-			'compatibility',
-			'<span id="compatibility-field-group-label">' . esc_html__( 'Compatibility', 'aspireupdate' ) . '</span>',
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_settings_section',
-			[
-				'id'      => 'compatibility',
-				'type'    => 'checkbox-group',
-				'data'    => $options,
-				'options' => [
-					'skip_rewriting_on_existing_response' => esc_html__( 'Skip API rewriting if another plugin already appears to be rewriting API requests', 'aspireupdate' ),
-				],
-			]
-		);
-
-		add_settings_section(
-			'aspireupdate_debug_settings_section',
-			esc_html__( 'API Debug Configuration', 'aspireupdate' ),
-			null,
-			'aspireupdate-settings',
-			[
-				'before_section' => '<div class="%s">',
-				'after_section'  => '</div>',
-			]
-		);
-
-		add_settings_field(
-			'enable_debug',
-			esc_html__( 'Debug Mode', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_debug_settings_section',
-			[
-				'id'    => 'enable_debug',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'label' => esc_html__( 'Enable logging and other debugging functionality', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'enable_debug_type',
-			'<span id="enable_debug_type-field-group-label">' . esc_html__( 'Log Contents', 'aspireupdate' ) . '</span>',
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_debug_settings_section',
-			[
-				'id'      => 'enable_debug_type',
-				'type'    => 'checkbox-group',
-				'data'    => $options,
-				'options' => [
-					'request'  => esc_html__( 'Include request arguments', 'aspireupdate' ),
-					'response' => esc_html__( 'Include response headers and body', 'aspireupdate' ),
-					'string'   => esc_html__( 'Include a simple description of each step in the rewriting process', 'aspireupdate' ),
-				],
-			]
-		);
-
-		add_settings_field(
-			'disable_ssl_verification',
-			esc_html__( 'SSL Verification', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_debug_settings_section',
-			[
-				'id'    => 'disable_ssl_verification',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disable SSL verification to allow for local testing', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_section(
-			'aspireupdate_privacy_settings_section',
-			esc_html__( 'Configuration options related to Privacy and Performance', 'aspireupdate' ),
-			null,
-			'aspireupdate-settings',
-			[
-				'before_section' => '<div class="%s">',
-				'after_section'  => '</div>',
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_remote_avatar_services',
-			esc_html__( 'Avatar Services', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_remote_avatar_services',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disables remote avatar fetching (e.g. Gravatar) and replaces it with a local avatar image.', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_dashboard_news_widget',
-			esc_html__( 'News and Events Widget', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_dashboard_news_widget',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Remove dashboard news widget that fetches from planet.wordpress.org', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_oembed_discovery',
-			esc_html__( 'oEmbed and REST discovery', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_oembed_discovery',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disable oEmbed and REST discovery', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_xmlrpc',
-			esc_html__( 'XML-RPC and pingbacks', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_xmlrpc',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disable XML-RPC and pingbacks', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_remote_core_update_check',
-			esc_html__( 'Core Update Checks', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_remote_core_update_check',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disables the Checks of WordPress version updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_remote_plugin_update_check',
-			esc_html__( 'Plugin Update Checks', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_remote_plugin_update_check',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disables the Checks for plugin updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
-			]
-		);
-
-		add_settings_field(
-			'disable_privacy_remote_theme_update_check',
-			esc_html__( 'Theme Update Checks', 'aspireupdate' ),
-			[ $this, 'add_settings_field_callback' ],
-			'aspireupdate-settings',
-			'aspireupdate_privacy_settings_section',
-			[
-				'id'    => 'disable_privacy_remote_theme_update_check',
-				'type'  => 'checkbox',
-				'data'  => $options,
-				'class' => 'advanced-setting',
-				'label' => esc_html__( 'Disables the Checks for theme updates.  The WordPress version, PHP version, and locale etc is sent to the host server when the check is made.', 'aspireupdate' ),
-			]
-		);
+				add_settings_field(
+					$field['id'],
+					( $field['title-before'] ?? '' ) . esc_html( $field['title'] ) . ( $field['title-after'] ?? '' ),
+					[ $this, 'add_settings_field_callback' ],
+					'aspireupdate-settings',
+					$field['section'] ?? '',
+					$args
+				);
+			}
+		}
 	}
 
 	/**
@@ -868,40 +736,31 @@ class Admin_Settings {
 	 */
 	public function sanitize_settings( $input ) {
 		$sanitized_input = [];
-
-		$sanitized_input['enable']         = (int) ! empty( $input['enable'] );
-		$sanitized_input['api_key']        = sanitize_text_field( $input['api_key'] ?? '' );
-		$sanitized_input['api_host']       = sanitize_text_field( $input['api_host'] ?? '' );
-		$sanitized_input['api_host_other'] = sanitize_text_field( $input['api_host_other'] ?? '' );
-
-		if ( isset( $input['compatibility'] ) && is_array( $input['compatibility'] ) ) {
-			$sanitized_input['compatibility'] = array_map(
-				function ( $value ) {
-					return (int) ! empty( $value );
-				},
-				$input['compatibility']
-			);
-		} else {
-			$sanitized_input['compatibility'] = [
-				'skip_rewriting_on_existing_response' => 0,
-			];
+		$fields_data     = $this->get_fields_data();
+		if ( ! is_array( $fields_data ) ) {
+			return $sanitized_input;
 		}
-
-		$sanitized_input['enable_debug'] = (int) ! empty( $input['enable_debug'] );
-		if ( isset( $input['enable_debug_type'] ) && is_array( $input['enable_debug_type'] ) ) {
-			$sanitized_input['enable_debug_type'] = array_map( 'sanitize_text_field', $input['enable_debug_type'] );
-		} else {
-			$sanitized_input['enable_debug_type'] = [];
+		foreach ( $fields_data as $field_data ) {
+			if ( ! isset( $field_data['sanitize'] ) || ! isset( $field_data['id'] ) ) {
+				continue;
+			}
+			switch ( $field_data['sanitize'] ) {
+				case 'checkbox':
+					$sanitized_input[ $field_data['id'] ] = (int) ! empty( $input[ $field_data['id'] ] );
+					break;
+				case 'checkbox-group':
+					$sanitized_input[ $field_data['id'] ] = [];
+					if ( isset( $input[ $field_data['id'] ] ) && is_array( $input[ $field_data['id'] ] ) ) {
+						foreach ( $input[ $field_data['id'] ] as $key => $value ) {
+							$sanitized_input[ $field_data['id'] ][ sanitize_key( $key ) ] = (int) ! empty( $value );
+						}
+					}
+					break;
+				case 'text':
+					$sanitized_input[ $field_data['id'] ] = sanitize_text_field( $input[ $field_data['id'] ] ?? '' );
+					break;
+			}
 		}
-		$sanitized_input['disable_ssl_verification'] = (int) ! empty( $input['disable_ssl_verification'] );
-
-		$sanitized_input['disable_privacy_remote_avatar_services']     = (int) ! empty( $input['disable_privacy_remote_avatar_services'] );
-		$sanitized_input['disable_privacy_dashboard_news_widget']      = (int) ! empty( $input['disable_privacy_dashboard_news_widget'] );
-		$sanitized_input['disable_privacy_oembed_discovery']           = (int) ! empty( $input['disable_privacy_oembed_discovery'] );
-		$sanitized_input['disable_privacy_xmlrpc']                     = (int) ! empty( $input['disable_privacy_xmlrpc'] );
-		$sanitized_input['disable_privacy_remote_core_update_check']   = (int) ! empty( $input['disable_privacy_remote_core_update_check'] );
-		$sanitized_input['disable_privacy_remote_plugin_update_check'] = (int) ! empty( $input['disable_privacy_remote_plugin_update_check'] );
-		$sanitized_input['disable_privacy_remote_theme_update_check']  = (int) ! empty( $input['disable_privacy_remote_theme_update_check'] );
 
 		return $sanitized_input;
 	}

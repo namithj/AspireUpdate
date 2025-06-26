@@ -1,0 +1,163 @@
+[
+	{
+		"id": "aspireupdate_settings_section",
+		"type": "section",
+		"title": "API Configuration"
+	},
+	{
+		"id": "enable",
+		"title": "API Rewriting",
+		"label": "Rewrite API requests",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_settings_section"
+	},
+	{
+		"id": "api_host",
+		"title": "API Host",
+		"type": "hosts",
+		"label-for": true,
+		"sanitize": "text",
+		"section": "aspireupdate_settings_section"
+	},
+	{
+		"id": "api_key",
+		"title": "API Key",
+		"description": "Some repositories may require an API key for authentication.",
+		"type": "api-key",
+		"label-for": true,
+		"sanitize": "text",
+		"section": "aspireupdate_settings_section"
+	},
+	{
+		"id": "compatibility",
+		"title": "Compatibility",
+		"title-before": "<span id='compatibility-field-group-label'>",
+		"title-after": "</span>",
+		"label": "Rewrite API requests",
+		"type": "checkbox-group",
+		"options": {
+			"skip_rewriting_on_existing_response": "Skip API rewriting if another plugin already appears to be rewriting API requests"
+		},
+		"sanitize": "checkbox-group",
+		"section": "aspireupdate_settings_section"
+	},
+	{
+		"id": "aspireupdate_debug_settings_section",
+		"type": "section",
+		"title": "API Debug Configuration"
+	},
+	{
+		"id": "enable_debug",
+		"title": "Debug Mode",
+		"label": "Enable logging and other debugging functionality",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_debug_settings_section"
+	},
+	{
+		"id": "enable_debug_type",
+		"title": "Log Contents",
+		"title-before": "<span id='compatibility-field-group-label'>",
+		"title-after": "</span>",
+		"type": "checkbox-group",
+		"options": {
+			"request": "Include request arguments",
+			"response": "Include response headers and body",
+			"string": "Include a simple description of each step in the rewriting process"
+		},
+		"sanitize": "checkbox-group",
+		"section": "aspireupdate_debug_settings_section"
+	},
+	{
+		"id": "disable_ssl_verification",
+		"title": "SSL Verification",
+		"label": "Disable SSL verification to allow for local testing",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_debug_settings_section"
+	},
+	{
+		"id": "aspireupdate_privacy_settings_section",
+		"type": "section",
+		"title": "Configuration options related to Privacy and Performance"
+	},
+	{
+		"id": "disable_privacy_remote_avatar_services",
+		"title": "Avatar Services",
+		"label": "Disables remote avatar fetching (e.g. Gravatar) and replaces it with a local avatar image.",
+		"class": "advanced-setting",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_dashboard_news_widget",
+		"title": "News and Events Widget",
+		"label": "Remove dashboard news widget that fetches from planet.wordpress.org",
+		"class": "advanced-setting",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_oembed_discovery",
+		"title": "oEmbed and REST discovery",
+		"label": "Disable oEmbed and REST discovery",
+		"class": "advanced-setting",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_xmlrpc",
+		"title": "XML-RPC and pingbacks",
+		"label": "Disable XML-RPC and pingbacks",
+		"class": "advanced-setting",
+		"type": "checkbox",
+		"sanitize": "checkbox",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_remote_update_check",
+		"title": "Update Checks",
+		"title-before": "<span id='compatibility-field-group-label'>",
+		"title-after": "</span>",
+		"type": "checkbox-group",
+		"options": {
+			"core": "Disables the Checks of WordPress version updates.",
+			"plugins": "Disables the Checks for plugin updates.",
+			"themes": "Disables the Checks for theme updates."
+		},
+		"sanitize": "checkbox-group",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_auto_updates",
+		"title": "Automatic Updates",
+		"title-before": "<span id='compatibility-field-group-label'>",
+		"title-after": "</span>",
+		"type": "checkbox-group",
+		"options": {
+			"core": "Disables WordPress automatic updates.",
+			"plugins": "Disables plugin automatic updates.",
+			"themes": "Disables theme automatic updates."
+		},
+		"sanitize": "checkbox-group",
+		"section": "aspireupdate_privacy_settings_section"
+	},
+	{
+		"id": "disable_privacy_woocommerce",
+		"title": "Woocommerce",
+		"title-before": "<span id='compatibility-field-group-label'>",
+		"title-after": "</span>",
+		"type": "checkbox-group",
+		"options": {
+			"telemetry": "Disables WooCommerce telemetry tracking.",
+			"marketplace_extensions": "Disable marketplace extension suggestions.",
+			"scheduled_tasks": "Remove WooCommerce scheduled tasks that contact remote APIs."
+		},
+		"sanitize": "checkbox-group",
+		"section": "aspireupdate_privacy_settings_section"
+	}
+]

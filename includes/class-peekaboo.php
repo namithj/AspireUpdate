@@ -152,6 +152,57 @@ class Peekaboo {
 	}
 
 	/**
+	 * This method hooks into WordPress filters to disable automatic updates for plugins, themes, or core.
+	 *
+	 * @param string $target The target for disabling automatic updates. Can be 'plugins', 'themes', 'core', or 'all'.
+	 */
+	public function disable_automatic_updates( $target ) {
+		switch ( $target ) {
+			case 'plugins':
+				add_filter( 'auto_update_plugin', '__return_false' );
+				break;
+			case 'themes':
+				add_filter( 'auto_update_theme', '__return_false' );
+				break;
+			case 'core':
+				add_filter( 'auto_update_core', '__return_false' );
+				break;
+			case 'all':
+				add_filter( 'automatic_updater_disabled', '__return_true' );
+				break;
+		}
+	}
+
+	/**
+	 * This method hooks into WordPress actions to disable WooCommerce callbacks that may send telemetry data.
+	 *
+	 * @param string $target The target for disabling WooCommerce callbacks. Can be 'telemetry', 'marketplace_extensions', or 'scheduled_tasks'.
+	 */
+	public function disable_woocommerce_callbacks( $target ) {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return;
+		}
+		switch ( $target ) {
+			case 'telemetry':
+				remove_action( 'admin_init', [ 'WC_Tracker', 'send_tracking_data' ] );
+				remove_action( 'woocommerce_init', [ 'WC_Tracker', 'init' ] );
+				add_filter( 'woocommerce_tracker_enabled', '__return_false' );
+				add_filter( 'woocommerce_allow_tracking', '__return_false' );
+				break;
+			case 'marketplace_extensions':
+				add_filter( 'woocommerce_allow_marketplace_suggestions', '__return_false' );
+				add_filter( 'woocommerce_show_marketplace_suggestions', '__return_false' );
+				remove_action( 'admin_init', 'woocommerce_update_marketplace_suggestions' );
+				break;
+			case 'scheduled_tasks':
+				wp_clear_scheduled_hook( 'woocommerce_tracker_send_event' );
+				wp_clear_scheduled_hook( 'wc_admin_daily' );
+				wp_clear_scheduled_hook( 'wc_admin_unsnooze_admin_notes' );
+				break;
+		}
+	}
+
+	/**
 	 * This method hooks into WordPress filters to disable fetching avatars from remote services
 	 * and instead use a local avatar image.
 	 */
